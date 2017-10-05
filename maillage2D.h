@@ -14,8 +14,14 @@ public:
     //! Constructeur par defaut
     maillage2D() : sommets(0), faces(0) {}
 
-    //! Donne le sommet correspondant a une arrête
+    //! Donne le sommet correspondant a une arête
     int somArete(int tri, int i1, int i2);
+
+    //! Donnes les sommets des arêtes communes a 2 triangles
+    std::pair<int, int> somAreteCommune(int t1, int t2);
+
+    //! Swap l'arête commune entre 2 triangles
+    void swapArete(int t1, int t2);
 
     //! Initialisation a partir d'un .off
     bool loadOff(std::string filename);
