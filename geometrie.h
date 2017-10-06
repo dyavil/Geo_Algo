@@ -31,6 +31,7 @@ class Sommet {
 public:
     Sommet() {}
     Sommet(Point p, int f = -1) : coord(p), face(f) {}
+    bool operator ==(Sommet & comp);
 
     friend std::ostream & operator << (std::ostream & out, const Sommet & s) { return out << s.coord << " | face voisine : " << s.face; }
 
@@ -44,7 +45,10 @@ public:
     Triangle(int s1, int s2, int s3, int v1 = -1, int v2 = -1, int v3 = -1) : s{s1, s2, s3}, v{v1, v2, v3} {}
 
     friend std::ostream & operator << (std::ostream & out, const Triangle & t) { return out << "s : " << t.s[0] << " " << t.s[1] << " " << t.s[2] << " | v : " << t.v[0] << " " << t.v[1] << " " << t.v[2]; }
+    int (&getVoisins())[3]{return v;};
+    int (&getSommets())[3]{return s;};
 
+private:
     int s[3];
     int v[3];
 };

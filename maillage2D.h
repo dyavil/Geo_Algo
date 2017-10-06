@@ -7,6 +7,10 @@
 #include <fstream>
 #include <map>
 #include "geometrie.h"
+#include "myiterators.h"
+
+class circulateur_de_faces;
+class circulateur_de_sommets;
 
 class maillage2D{
 
@@ -32,6 +36,29 @@ public:
     //! Affiche les triangles du maillage
     void drawTriangles();
 
+    //! Renvoie le vector de sommets
+    std::vector<Sommet> & getSommets(){return sommets;}
+
+    //! Renvoie le vector de sommets
+    std::vector<Triangle> & getFaces(){return faces;}
+
+    //! Renvoie un circulateur de face autour du sommet v
+    circulateur_de_faces faces_incidente(Sommet & v);
+
+    //! Renvoie un circulateur de sommets autour du sommet v
+    circulateur_de_sommets sommets_adjacents(Sommet & v);
+
+    //! Iterateur sur les faces
+    typedef std::vector<Triangle>::iterator face_iterator;
+    face_iterator face_begin() { return faces.begin(); }
+    face_iterator face_end() { return faces.end(); }
+
+    //! Iterateur sur les sommets
+    typedef std::vector<Sommet>::iterator sommet_iterator;
+    sommet_iterator sommet_begin() { return sommets.begin(); }
+    sommet_iterator sommet_end() { return sommets.end(); }
+
+private:
     //! Attributs
     std::vector<Sommet> sommets;
     std::vector<Triangle> faces;

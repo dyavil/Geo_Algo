@@ -4,6 +4,7 @@
 #include "maillage2D.h"
 
 
+
 class Gasket
 {
 public:

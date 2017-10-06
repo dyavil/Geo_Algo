@@ -16,13 +16,16 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     gldisplay.cpp \
     gasket.cpp \
-    maillage2D.cpp
+    maillage2D.cpp \
+    myiterators.cpp \
+    geometrie.cpp
 
 HEADERS  += mainwindow.h \
     gldisplay.h \
     gasket.h \
     geometrie.h \
-    maillage2D.h
+    maillage2D.h \
+    myiterators.h
 
 FORMS    += mainwindow.ui
 
