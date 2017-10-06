@@ -148,6 +148,20 @@ void maillage2D::drawEdges() {
 }
 
 
+// Affiche les lignes du maillage triangulé
+void maillage2D::drawEdgesTriangulation() {
+    for(unsigned int i = 0; i < faces.size(); i++) {
+        glBegin(GL_LINE_LOOP);
+        if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
+            glVertex3f(sommets[faces[i].getSommets()[0]].coord.x, sommets[faces[i].getSommets()[0]].coord.y, sommets[faces[i].getSommets()[0]].coord.z);
+            glVertex3f(sommets[faces[i].getSommets()[1]].coord.x, sommets[faces[i].getSommets()[1]].coord.y, sommets[faces[i].getSommets()[1]].coord.z);
+            glVertex3f(sommets[faces[i].getSommets()[2]].coord.x, sommets[faces[i].getSommets()[2]].coord.y, sommets[faces[i].getSommets()[2]].coord.z);
+        }
+        glEnd();
+    }
+}
+
+
 // Affiche les faces du maillage
 void maillage2D::drawTriangles() {
     glBegin(GL_TRIANGLES);
@@ -248,13 +262,10 @@ void maillage2D::buildMaillage(){
 
             unsigned int pos = inTriangle(sommets[i].getPoint());
             if(pos == (unsigned int)-1) {
-                //addPointOut(i);
-                std::cout << "infinite" << std::endl;
+                addPointOut(i);
             }
             else {
                 addPointIn(pos, i);
-
-                std::cout << "insert in : " << pos << std::endl;
             }
         }
 
@@ -301,7 +312,7 @@ int maillage2D::inTriangle(Point p1){
     for(unsigned int i = 0; i < faces.size(); ++i){
         bool cont = true;
         if(faces[i].getSommets()[0] == 0 || faces[i].getSommets()[1] == 0 || faces[i].getSommets()[2] == 0) cont = false;
-        std::cout << "test infinite 1 " << std::endl << std::endl;
+
         if (cont){
         Vector3 vec1 = Vector3(p1, sommets[faces[i].getSommets()[0]].getPoint());
         Vector3 vec2 = Vector3(p1, sommets[faces[i].getSommets()[1]].getPoint());
@@ -360,4 +371,117 @@ void maillage2D::updateNeighbors(int idtR, int idtO, int newid){
     else if(faces[idtR].getVoisins()[1] == idtO) faces[idtR].getVoisins()[1] = newid;
     else if(faces[idtR].getVoisins()[2] == idtO) faces[idtR].getVoisins()[2] = newid;
 
+}
+
+
+
+void maillage2D::addPointOut(int p0){
+    std::vector<std::pair<int, int>> points;
+    std::vector<Triangle *> tris;
+    circulateur_de_faces circu = faces_incidente(*sommet_begin());
+
+    int nbt = 0;
+    circu = circu.debut();
+
+    do{
+        int p1, p2;
+        p1 = (*circu)->getSommets()[1];
+        p2 = (*circu)->getSommets()[2];
+
+        Vector3 vec1 = Vector3(sommets[p0].getPoint(), sommets[p1].getPoint());
+        Vector3 vec2 = Vector3(sommets[p0].getPoint(), sommets[p2].getPoint());
+        Vector3 dir;
+        dir = dir.cross(vec1, vec2);
+        if(dir.z > 0){
+            nbt++;
+            points.push_back(std::make_pair(p1, p2));
+            tris.push_back(*circu);
+
+        }
+        ++circu;
+    }while(circu != circu.debut());
+
+    for(unsigned int i = 0; i < points.size(); i++){
+
+
+        int oldp1 = tris[i]->getSommets()[1];
+        tris[i]->getSommets()[0] = p0;
+
+    }
+    int idStart=1;
+    std::vector<Triangle *> orderTris;
+    std::vector<std::pair<int, int>> orderPoints;
+    if(tris.size() > 1){
+
+        Triangle * startT = tris[0];
+        for(int i = 1; i < tris.size(); i++){
+            if(&(faces[startT->getVoisins()[1]]) == tris[i]){
+
+                idStart++;
+             }else break;
+            startT = tris[i];
+        }
+        if(idStart < tris.size()){
+
+            for(int i = idStart; i < tris.size(); i++) {
+                orderTris.push_back(tris[i]);
+                orderPoints.push_back(points[i]);
+            }
+            for(int i = 0; i < idStart; i++){
+                orderPoints.push_back(points[i]);
+                orderTris.push_back(tris[i]);
+            }
+        }else{
+            orderPoints = points;
+            orderTris = tris;
+        }
+    }else{
+        orderPoints = points;
+        orderTris = tris;
+    }
+
+
+
+    if(orderPoints.size() > 0){
+        std::cout << "suuuuuuuuuuuuuuuuup0 " << idStart << std::endl;
+        int st = faces.size()+1;
+        int p1, p2;
+
+        int nT2 = orderTris[0]->getVoisins()[2];
+        int nT1 = orderTris[orderTris.size()-1]->getVoisins()[1];
+        int inT2, inT1;
+
+
+        if(orderTris.size()>1){
+            inT2 = orderTris[1]->getVoisins()[2];
+            //triangles[tris[0]->getVoisins()[2]]
+
+        }
+        else{
+            inT2 = faces[orderTris[0]->getVoisins()[1]].getVoisins()[2];
+        }
+
+        if(orderTris.size()>1) {
+            inT1 = orderTris[orderTris.size()-2]->getVoisins()[1];
+        }
+        else{
+            inT1 = faces[orderTris[0]->getVoisins()[2]].getVoisins()[1];
+
+        }
+        faces[nT2].getVoisins()[1] = st-1;
+        faces[nT1].getVoisins()[2] = st;
+        orderTris[0]->getVoisins()[2] = st-1;
+        orderTris[orderTris.size()-1]->getVoisins()[1] = st;
+
+        p1 = orderPoints[0].first;
+        //maj des voisin au deux créérs
+        p2 = orderPoints[orderPoints.size()-1].second;
+        faces.push_back(Triangle(0, p1, p0, inT2, st, nT2));
+
+        faces.push_back(Triangle(0, p0, p2, inT1, nT1, st-1));
+
+        sommets[0].setFace(faces.size()-2);
+        sommets[p0].setFace(inT2);
+
+    }
 }

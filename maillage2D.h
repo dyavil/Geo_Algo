@@ -33,6 +33,9 @@ public:
     //! Affiche les lignes du maillage
     void drawEdges();
 
+    //! Affiche les lignes du maillage triangulé
+    void drawEdgesTriangulation();
+
     //! Affiche les triangles du maillage
     void drawTriangles();
 
@@ -69,6 +72,8 @@ public:
 
     void addPointIn(int idTriangle, int p1);
     void updateNeighbors(int idtR, int idtO, int newid);
+
+    void addPointOut(int p0);
 
 private:
     //! Attributs
