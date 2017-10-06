@@ -2,7 +2,8 @@
 
 Gasket::Gasket()
 {
-    maillage.loadOff("/home/dyavil/Documents/Master2/MaillageGeoAlgo/ToLoad/cone.off");
+    //maillage.loadOff("/home/dyavil/Documents/Master2/MaillageGeoAlgo/ToLoad/cone.off");
+    maillage.loadPoints("/home/dyavil/Documents/Master2/MaillageGeoAlgo/ToLoad/points.noff");
     bool infinite_loop = false;
 
     //test circulators

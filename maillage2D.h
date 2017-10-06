@@ -58,6 +58,18 @@ public:
     sommet_iterator sommet_begin() { return sommets.begin(); }
     sommet_iterator sommet_end() { return sommets.end(); }
 
+    //! Lecture d'un fichier de points
+    void loadPoints(std::__cxx11::string filename);
+
+    void buildMaillage();
+
+    void calculVoisin(std::map<std::pair<int, int>, int> & faceVoisine, int iSom[]);
+
+    int inTriangle(Point p1);
+
+    void addPointIn(int idTriangle, int p1);
+    void updateNeighbors(int idtR, int idtO, int newid);
+
 private:
     //! Attributs
     std::vector<Sommet> sommets;

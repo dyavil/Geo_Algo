@@ -35,6 +35,10 @@ public:
 
     friend std::ostream & operator << (std::ostream & out, const Sommet & s) { return out << s.coord << " | face voisine : " << s.face; }
 
+    int getFace(){return face;}
+    Point getPoint(){return coord;}
+    void setFace(int newFace){face = newFace;}
+
     Point coord;
     int face;
 };
