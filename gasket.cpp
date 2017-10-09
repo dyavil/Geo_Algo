@@ -5,7 +5,9 @@ Gasket::Gasket()
     //maillage.loadOff("/home/dyavil/Documents/Master2/MaillageGeoAlgo/ToLoad/cone.off");
     maillage.loadPoints("/home/dyavil/Documents/Master2/MaillageGeoAlgo/ToLoad/points.noff");
     bool infinite_loop = false;
+    //marche pas
 
+    //maillage.swapArete(7, 2);
     //test circulators
     maillage2D::sommet_iterator iit = maillage.sommet_begin();
 
@@ -49,15 +51,15 @@ Gasket::Gasket()
 
     for(unsigned int i = 0; i < maillage.getFaces().size(); ++i) {
         std::cout << i << " | " << maillage.getFaces()[i] << std::endl;
-    }/*
-
-    maillage.swapArete(0, 1);
-
-    std::cout << "=======================" << std::endl;
-    for(unsigned int i = 0; i < maillage.faces.size(); ++i) {
-        std::cout << i << " | " << maillage.faces[i] << std::endl;
     }
-    */
+
+
+
+    /*std::cout << "=======================" << std::endl;
+    for(unsigned int i = 0; i < maillage.getFaces().size(); ++i) {
+        std::cout << i << " | " << maillage.getFaces()[i] << std::endl;
+    }*/
+
 
 }
 
