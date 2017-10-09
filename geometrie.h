@@ -1,7 +1,9 @@
 #ifndef GEOMETRIE
 #define GEOMETRIE
 
-#include <ostream>
+#include<iostream>
+#include<math.h>
+
 
 #define VAR_TYPE    float
 
@@ -55,6 +57,13 @@ public:
 private:
     int s[3];
     int v[3];
+};
+
+
+class Delaunay{
+public:
+    static bool isOutCircle(Point p1, Point p2, Point p3, Point np);
+    static double deter(int n, double mat[10][10], double & d);
 };
 
 #endif // GEOMETRIE
