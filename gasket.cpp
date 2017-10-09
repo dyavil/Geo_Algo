@@ -2,8 +2,11 @@
 
 Gasket::Gasket()
 {
+    // /media/emeric/DATA/Documents/Etudes/M2/Geo_Algo/geo-algo/off/
+    // /home/dyavil/Documents/Master2/MaillageGeoAlgo/ToLoad
+
     //maillage.loadOff("/home/dyavil/Documents/Master2/MaillageGeoAlgo/ToLoad/cone.off");
-    maillage.loadPoints("/home/dyavil/Documents/Master2/MaillageGeoAlgo/ToLoad/points.noff");
+    maillage.loadPoints("/media/emeric/DATA/Documents/Etudes/M2/Geo_Algo/geo-algo/off/points.noff");
     bool infinite_loop = false;
 
     //test circulators
@@ -49,8 +52,9 @@ Gasket::Gasket()
 
     for(unsigned int i = 0; i < maillage.getFaces().size(); ++i) {
         std::cout << i << " | " << maillage.getFaces()[i] << std::endl;
-    }/*
+    }
 
+    /*
     maillage.swapArete(0, 1);
 
     std::cout << "=======================" << std::endl;
