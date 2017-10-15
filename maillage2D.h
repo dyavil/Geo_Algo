@@ -75,10 +75,16 @@ public:
 
     void addPointOut(int p0);
 
+    void makeDelauney();
+
 private:
     //! Attributs
     std::vector<Sommet> sommets;
     std::vector<Triangle> faces;
+
+    std::pair<int, int> getSommetOppose(int trangleId, int sommetPos);
+
+    bool canSwap(int idt1, int idt2);
 
 };
 

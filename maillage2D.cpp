@@ -485,3 +485,61 @@ void maillage2D::addPointOut(int p0){
 
     }
 }
+
+std::pair<int, int> maillage2D::getSommetOppose(int triangleId, int sommetPos){
+    int ids = -1;
+    int tId;
+    int sommmet1Arrete;
+    int sommmet2Arrete;
+    if(sommetPos == 0) {
+        tId = faces[triangleId].getVoisins()[0];
+        sommmet1Arrete = faces[triangleId].getSommets()[1];
+        sommmet2Arrete = faces[triangleId].getSommets()[2];
+    }
+    else if(sommetPos == 1) {
+        tId = faces[triangleId].getVoisins()[1];
+        sommmet1Arrete = faces[triangleId].getSommets()[2];
+        sommmet2Arrete = faces[triangleId].getSommets()[0];
+    }
+    else {
+        tId = faces[triangleId].getVoisins()[2];
+        sommmet1Arrete = faces[triangleId].getSommets()[0];
+        sommmet2Arrete = faces[triangleId].getSommets()[1];
+    }
+    if(faces[tId].getSommets()[0] != sommmet1Arrete && faces[tId].getSommets()[0] != sommmet2Arrete)
+        ids = faces[tId].getSommets()[0];
+    else if(faces[tId].getSommets()[1] != sommmet1Arrete && faces[tId].getSommets()[1] != sommmet2Arrete)
+        ids = faces[tId].getSommets()[1];
+    else ids = faces[tId].getSommets()[2];
+    return std::make_pair(ids, tId);
+}
+
+void maillage2D::makeDelauney(){
+    for (int i = 0; i < faces.size(); ++i) {
+        if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
+            int currentSommet1 = getSommetOppose(i, 0).first;
+            int currentVoisin1 = getSommetOppose(i, 0).second;
+            int currentSommet2 = getSommetOppose(i, 1).first;
+            int currentVoisin2 = getSommetOppose(i, 1).second;
+            int currentSommet3 = getSommetOppose(i, 2).first;
+            int currentVoisin3 = getSommetOppose(i, 2).second;
+            Delaunay d;
+            if(currentSommet1 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet1].getPoint())){
+                if (canSwap(currentVoisin1, i)) swapArete(currentVoisin1, i);
+            }
+            if(currentSommet2 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet2].getPoint())){
+                if (canSwap(currentVoisin2, i)) swapArete(currentVoisin2, i);
+            }
+            if(currentSommet3 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet3].getPoint())){
+                if (canSwap(currentVoisin3, i)) swapArete(currentVoisin3, i);
+            }
+        }
+
+    }
+}
+
+bool maillage2D::canSwap(int idt1, int idt2){
+    bool res = false;
+
+    return res;
+}

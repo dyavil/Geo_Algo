@@ -8,6 +8,7 @@ Gasket::Gasket()
     //maillage.loadOff("/home/dyavil/Documents/Master2/MaillageGeoAlgo/ToLoad/cone.off");
     maillage.loadPoints("/home/dyavil/Documents/Master2/MaillageGeoAlgo/ToLoad/points.noff");
     bool infinite_loop = false;
+    maillage.makeDelauney();
 
     //test circulators
     maillage2D::sommet_iterator iit = maillage.sommet_begin();
@@ -56,8 +57,9 @@ Gasket::Gasket()
 
     /*int ss[3] = {maillage.getFaces()[2].getSommets()[0], maillage.getFaces()[2].getSommets()[1], maillage.getFaces()[2].getSommets()[2]};
     Delaunay d;
-    bool res = d.isOutCircle(maillage.getSommets()[ss[0]].getPoint(), maillage.getSommets()[ss[1]].getPoint(), maillage.getSommets()[ss[2]].getPoint(), Point(0, -0.02, 0));
+    bool res = d.isOutCircle(maillage.getSommets()[ss[0]].getPoint(), maillage.getSommets()[ss[1]].getPoint(), maillage.getSommets()[ss[2]].getPoint(), Point(0, -4, 0));
     std::cout << "res : " << res << maillage.getFaces()[2] << std::endl;*/
+
     //si res, en dehors du cercle
     /*
     maillage.swapArete(0, 1);
