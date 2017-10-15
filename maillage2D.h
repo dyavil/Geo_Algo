@@ -77,6 +77,8 @@ public:
 
     void makeDelauney();
 
+    bool isTrigo(int s1, int s2, int s3);
+
 private:
     //! Attributs
     std::vector<Sommet> sommets;

@@ -526,20 +526,41 @@ void maillage2D::makeDelauney(){
             Delaunay d;
             if(currentSommet1 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet1].getPoint())){
                 if (canSwap(currentVoisin1, i)) swapArete(currentVoisin1, i);
+                std::cout << "swap1 " << currentSommet1 << faces[i].getSommets()[0] << faces[i].getSommets()[1] << faces[i].getSommets()[2] << std::endl;
             }
             if(currentSommet2 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet2].getPoint())){
                 if (canSwap(currentVoisin2, i)) swapArete(currentVoisin2, i);
+                std::cout << "swap2 " << currentSommet2 << faces[i].getSommets()[0] << faces[i].getSommets()[1] << faces[i].getSommets()[2] << std::endl;
             }
             if(currentSommet3 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet3].getPoint())){
                 if (canSwap(currentVoisin3, i)) swapArete(currentVoisin3, i);
+                std::cout << "swap3 " << currentSommet3 << std::endl;
             }
         }
 
     }
 }
 
-bool maillage2D::canSwap(int idt1, int idt2){
-    bool res = false;
+bool maillage2D::isTrigo(int s1, int s2, int s3){
+    Vector3 u(sommets[s1].coord, sommets[s2].coord);
+    Vector3 v(sommets[s1].coord, sommets[s3].coord);
+    Vector3 uv = Vector3::cross(u, v);
+    if(uv.z > 0) {
+        return true;
+    }
+    return false;
+}
 
-    return res;
+bool maillage2D::canSwap(int t1, int t2){
+    std::pair<int, int> aretesCommunes = somAreteCommune(t1, t2);
+    int ac1 = aretesCommunes.first;
+    int ac2 = aretesCommunes.second;
+    if(ac1 == -1 || ac2 == -1) { return false; }
+    if( isTrigo(faces[t1].getSommets()[ac1], faces[t1].getSommets()[(ac1+1)%3], faces[t2].getSommets()[ac2]) &&
+
+        isTrigo(faces[t2].getSommets()[ac2], faces[t2].getSommets()[(ac2+1)%3], faces[t1].getSommets()[ac1]) ) {
+
+        return true;
+    }
+    return true;
 }

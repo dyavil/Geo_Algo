@@ -74,7 +74,7 @@ Gasket::Gasket()
 
 void Gasket::draw()
 {
-    maillage.drawEdgesTriangulation();
-    //maillage.drawTriangles();
+    //maillage.drawEdgesTriangulation();
+    maillage.drawEdges();
 }
 
