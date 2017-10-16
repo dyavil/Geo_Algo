@@ -6,7 +6,8 @@ Gasket::Gasket()
     // /home/dyavil/Documents/Master2/MaillageGeoAlgo/ToLoad
 
     //maillage.loadOff("/home/dyavil/Documents/Master2/MaillageGeoAlgo/ToLoad/cone.off");
-    maillage.loadPoints("/media/emeric/DATA/Documents/Etudes/M2/Geo_Algo/geo-algo/off/livai.noff");
+    maillage.loadPoints("/home/dyavil/Documents/Master2/MaillageGeoAlgo/geo-algo/off/livai.noff");
+    //maillage.loadPoints("/home/dyavil/Documents/Master2/MaillageGeoAlgo/geo-algo/off/points.pts", false);
     bool infinite_loop = false;
     maillage.makeDelauney();
 
@@ -22,7 +23,7 @@ Gasket::Gasket()
         do{
            ++circu;
             cnt++;
-            if(cnt > 15) {
+            if(cnt > 20) {
                 std::cout << " break " << std::endl;
                 infinite_loop =true;
                 break;
@@ -38,7 +39,7 @@ Gasket::Gasket()
            ++circu2;
 
             cnt++;
-            if(cnt > 15) {
+            if(cnt > 20) {
                 infinite_loop =true;
                 break;
             }
@@ -54,7 +55,7 @@ Gasket::Gasket()
     for(unsigned int i = 0; i < maillage.getFaces().size(); ++i) {
         std::cout << i << " | " << maillage.getFaces()[i] << std::endl;
     }
-
+    maillage.makeIncrementDelauney(1);
     /*int ss[3] = {maillage.getFaces()[2].getSommets()[0], maillage.getFaces()[2].getSommets()[1], maillage.getFaces()[2].getSommets()[2]};
     Delaunay d;
     bool res = d.isOutCircle(maillage.getSommets()[ss[0]].getPoint(), maillage.getSommets()[ss[1]].getPoint(), maillage.getSommets()[ss[2]].getPoint(), Point(0, -4, 0));

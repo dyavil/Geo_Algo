@@ -4,6 +4,7 @@
 #include <GL/gl.h>
 #include <iostream>
 #include <vector>
+#include <stack>
 #include <fstream>
 #include <map>
 #include "geometrie.h"
@@ -62,7 +63,7 @@ public:
     sommet_iterator sommet_end() { return sommets.end(); }
 
     //! Lecture d'un fichier de points
-    void loadPoints(std::__cxx11::string filename);
+    void loadPoints(std::string filename, bool d3=true);
 
     void buildMaillage();
 
@@ -76,6 +77,8 @@ public:
     void addPointOut(int p0);
 
     void makeDelauney();
+
+    void makeIncrementDelauney(int np);
 
     bool isTrigo(int s1, int s2, int s3);
 

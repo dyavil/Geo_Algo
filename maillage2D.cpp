@@ -13,8 +13,6 @@ circulateur_de_sommets maillage2D::sommets_adjacents(Sommet & v){
     return r;
 }
 
-
-
 // Donne le sommet correspondant a une arête
 int maillage2D::somArete(int tri, int i1, int i2) {
     for(int i = 0; i < 3; i++) {
@@ -186,7 +184,7 @@ void maillage2D::drawTriangles() {
 }
 
 
-void maillage2D::loadPoints(std::__cxx11::string filename){
+void maillage2D::loadPoints(std::string filename, bool d3){
 
     std::ifstream file;
     Sommet infinite = Sommet(Point(0, 0, -1), -1);
@@ -196,7 +194,11 @@ void maillage2D::loadPoints(std::__cxx11::string filename){
     file >> nbs;
     float x0, y0, z0;
     for(unsigned int i = 0; i < nbs; i++){
-        file >> x0 >> y0 >> z0;
+        if(d3) file >> x0 >> y0 >> z0;
+        else {
+            file >> x0 >> y0;
+            z0 = 0;
+        }
         sommets.push_back(Sommet(Point(x0, y0, z0), -1));
     }
     file.close();
@@ -557,13 +559,14 @@ void maillage2D::makeDelauney(){
             }
         }
         if(restart) {
-            std::cout << "break" << std::endl;
+            //std::cout << "break" << std::endl;
             break;
         }
 
     }
     }
 }
+
 
 bool maillage2D::isTrigo(int s1, int s2, int s3){
     Vector3 u(sommets[s1].coord, sommets[s2].coord);
@@ -587,6 +590,41 @@ bool maillage2D::canSwap(int t1, int t2){
         return true;
     }
     return true;
+}
+void maillage2D::makeIncrementDelauney(int np){
+    std::stack<std::pair<int, int>> toLook;
+    circulateur_de_faces circu = faces_incidente(sommets[np]);
+    //initialisation de la liste a traiter
+    circu = circu.debut();
+    do{
+        int next, toAdd, toAddOppose;
+        if(np == (*circu)->getSommets()[0]) {
+            next = (*circu)->getVoisins()[1];
+            toAddOppose = (*circu)->getVoisins()[0];
+        }
+        else if(np == (*circu)->getSommets()[1]) {
+            next = (*circu)->getVoisins()[2];
+            toAddOppose = (*circu)->getVoisins()[1];
+        }
+        else{
+            next = (*circu)->getVoisins()[0];
+            toAddOppose = (*circu)->getVoisins()[2];
+        }
+        if(faces[next].getSommets()[0] == np) toAdd = faces[next].getVoisins()[2];
+        else if(faces[next].getSommets()[1] == np) toAdd = faces[next].getVoisins()[0];
+        else toAdd = faces[next].getVoisins()[1];
+        ++circu;
+        toLook.push(std::make_pair(toAdd, toAddOppose));
+    }while(circu!=circu.debut());
+    Delaunay d;
+    /*while(toLook.size() > 0){
+        if(isInvisible(toLook.top().first) || isInvisible(toLook.top().second)) toLook.pop();
+        //flip du premier
+        //if(d.isOutCircle())
+        //if(canSwap(toLook.top().first, toLook.top().second))
+        //ajout des voisins
+    }*/
+
 }
 
 bool maillage2D::isInvisible(int t) {
