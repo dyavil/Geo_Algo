@@ -21,7 +21,7 @@ bool Delaunay::isOutCircle(Point p1, Point p2, Point p3, Point np){
 
     double det = 0.0;
     det = -deter(3, mat, det);
-    std::cout << det << std::endl;
+    //std::cout << det << std::endl;
     if(det > 0) return true;
     return false;
 }

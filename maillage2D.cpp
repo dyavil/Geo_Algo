@@ -493,11 +493,14 @@ std::pair<int, int> maillage2D::getSommetOppose(int triangleId, int sommetPos){
     int sommmet2Arrete;
     if(sommetPos == 0) {
         tId = faces[triangleId].getVoisins()[0];
+        //std::cout << faces[tId] << "\n" << faces[triangleId] <<std::endl;
         sommmet1Arrete = faces[triangleId].getSommets()[1];
         sommmet2Arrete = faces[triangleId].getSommets()[2];
     }
     else if(sommetPos == 1) {
         tId = faces[triangleId].getVoisins()[1];
+
+        //std::cout << faces[tId] << "\n" << faces[triangleId] <<std::endl;
         sommmet1Arrete = faces[triangleId].getSommets()[2];
         sommmet2Arrete = faces[triangleId].getSommets()[0];
     }
@@ -506,16 +509,17 @@ std::pair<int, int> maillage2D::getSommetOppose(int triangleId, int sommetPos){
         sommmet1Arrete = faces[triangleId].getSommets()[0];
         sommmet2Arrete = faces[triangleId].getSommets()[1];
     }
-    if(faces[tId].getSommets()[0] != sommmet1Arrete && faces[tId].getSommets()[0] != sommmet2Arrete)
-        ids = faces[tId].getSommets()[0];
-    else if(faces[tId].getSommets()[1] != sommmet1Arrete && faces[tId].getSommets()[1] != sommmet2Arrete)
-        ids = faces[tId].getSommets()[1];
+    if(faces[tId].getSommets()[0] != sommmet1Arrete && faces[tId].getSommets()[0] != sommmet2Arrete) ids = faces[tId].getSommets()[0];
+    else if(faces[tId].getSommets()[1] != sommmet1Arrete && faces[tId].getSommets()[1] != sommmet2Arrete) ids = faces[tId].getSommets()[1];
     else ids = faces[tId].getSommets()[2];
     return std::make_pair(ids, tId);
 }
 
 void maillage2D::makeDelauney(){
+    bool restart = true;
+    while(restart){
     for (int i = 0; i < faces.size(); ++i) {
+        restart = false;
         if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
             int currentSommet1 = getSommetOppose(i, 0).first;
             int currentVoisin1 = getSommetOppose(i, 0).second;
@@ -525,19 +529,27 @@ void maillage2D::makeDelauney(){
             int currentVoisin3 = getSommetOppose(i, 2).second;
             Delaunay d;
             if(currentSommet1 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet1].getPoint())){
+                //std::cout << "swap1 " << currentSommet1 << faces[currentVoisin1] << faces[i].getSommets()[0] << faces[i].getSommets()[1] << faces[i].getSommets()[2] << std::endl;
                 if (canSwap(currentVoisin1, i)) swapArete(currentVoisin1, i);
-                std::cout << "swap1 " << currentSommet1 << faces[i].getSommets()[0] << faces[i].getSommets()[1] << faces[i].getSommets()[2] << std::endl;
+                restart = true;
             }
-            if(currentSommet2 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet2].getPoint())){
+            if(!restart && currentSommet2 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet2].getPoint())){
                 if (canSwap(currentVoisin2, i)) swapArete(currentVoisin2, i);
-                std::cout << "swap2 " << currentSommet2 << faces[i].getSommets()[0] << faces[i].getSommets()[1] << faces[i].getSommets()[2] << std::endl;
+                restart = true;
+                //std::cout << "swap2 " << currentSommet2 << faces[i].getSommets()[0] << faces[i].getSommets()[1] << faces[i].getSommets()[2] << std::endl;
             }
-            if(currentSommet3 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet3].getPoint())){
+            if(!restart && currentSommet3 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet3].getPoint())){
                 if (canSwap(currentVoisin3, i)) swapArete(currentVoisin3, i);
-                std::cout << "swap3 " << currentSommet3 << std::endl;
+                restart = true;
+                //std::cout << "swap3 " << currentSommet3 << std::endl;
             }
         }
+        if(restart) {
+            std::cout << "break" << std::endl;
+            break;
+        }
 
+    }
     }
 }
 
