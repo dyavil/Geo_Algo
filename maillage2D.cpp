@@ -60,9 +60,21 @@ void maillage2D::swapArete(int t1, int t2) {
     faces[t2].getVoisins()[(ac2+1)%3] = t1;
     faces[t2].getVoisins()[(ac2+2)%3] = copyT2.getVoisins()[(ac2+2)%3];
 
-    // Mise a jour des voisins des voisins
+    // Mise a jour des faces voisines des voisins
     faces[copyT2.getVoisins()[(ac2+1)%3]].getVoisins()[somArete(copyT2.getVoisins()[(ac2+1)%3], copyT2.getSommets()[ac2], copyT2.getSommets()[(ac2+2)%3])] = t1;
     faces[copyT1.getVoisins()[(ac1+1)%3]].getVoisins()[somArete(copyT1.getVoisins()[(ac1+1)%3], copyT1.getSommets()[ac1], copyT1.getSommets()[(ac1+2)%3])] = t2;
+
+    // Mise a jour des faces pointées par les sommets
+    sommets[faces[t1].getSommets()[(ac1+1)%3]].face = t1;
+    sommets[faces[t2].getSommets()[(ac2+1)%3]].face = t2;
+
+    // On répare les triangles "invisibles"
+    /*
+    setInfinyAtZero(t1);
+    setInfinyAtZero(t2);
+    setInfinyAtZero(copyT2.getVoisins()[(ac2+1)%3]);
+    setInfinyAtZero(copyT1.getVoisins()[(ac1+1)%3]);
+    */
 }
 
 
@@ -575,4 +587,32 @@ bool maillage2D::canSwap(int t1, int t2){
         return true;
     }
     return true;
+}
+
+bool maillage2D::isInvisible(int t) {
+    for(int i = 0; i < 3; ++i) {
+        if(faces[t].getSommets()[i] == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void maillage2D::setInfinyAtZero(int t) {
+    if(isInvisible(t)){
+        while(faces[t].getSommets()[0] != 0) {
+            int i2 = faces[t].getSommets()[2];
+            // Màj des faces
+            int s2 = faces[t].getSommets()[2];
+            faces[t].getSommets()[2] = faces[t].getSommets()[1];
+            faces[t].getSommets()[1] = faces[t].getSommets()[0];
+            faces[t].getSommets()[0] = i2;
+            faces[t].getSommets()[0] = s2;
+            // Màj des voisins
+            int v2 = faces[t].getVoisins()[2];
+            faces[t].getVoisins()[2] = faces[t].getVoisins()[1];
+            faces[t].getVoisins()[1] = faces[t].getVoisins()[0];
+            faces[t].getVoisins()[0] = v2;
+        }
+    }
 }

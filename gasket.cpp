@@ -6,7 +6,7 @@ Gasket::Gasket()
     // /home/dyavil/Documents/Master2/MaillageGeoAlgo/ToLoad
 
     //maillage.loadOff("/home/dyavil/Documents/Master2/MaillageGeoAlgo/ToLoad/cone.off");
-    maillage.loadPoints("/home/dyavil/Documents/Master2/MaillageGeoAlgo/ToLoad/points.noff");
+    maillage.loadPoints("/media/emeric/DATA/Documents/Etudes/M2/Geo_Algo/geo-algo/off/livai.noff");
     bool infinite_loop = false;
     maillage.makeDelauney();
 

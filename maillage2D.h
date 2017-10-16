@@ -79,6 +79,13 @@ public:
 
     bool isTrigo(int s1, int s2, int s3);
 
+    // Indique si un triangle a pour sommet le point infini
+    bool isInvisible(int t);
+
+    // Remet le point infini d'un triangle a la position 0
+    void setInfinyAtZero(int t);
+
+
 private:
     //! Attributs
     std::vector<Sommet> sommets;
