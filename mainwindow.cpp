@@ -17,6 +17,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::onButton() {
     ++color;
-    float colors[4][3] = {{1.f, 1.f, 0.f}, {1.f, 0.f, 0.f}, {0.f, 1.f, 0.f}, {0.f, 0.f, 1.f}};
-    glColor3fv(colors[color % 4]);
+    /*float colors[4][3] = {{1.f, 1.f, 0.f}, {1.f, 0.f, 0.f}, {0.f, 1.f, 0.f}, {0.f, 0.f, 1.f}};
+    glColor3fv(colors[color % 4]);*/
+    glColor3f(1.0, 1.0, 1.0);
 }

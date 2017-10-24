@@ -46,6 +46,8 @@ public:
     //! Renvoie le vector de sommets
     std::vector<Triangle> & getFaces(){return faces;}
 
+    std::vector<VoronoiCell> & getVoronoi(){return voronoiCells;}
+
     //! Renvoie un circulateur de face autour du sommet v
     circulateur_de_faces faces_incidente(Sommet & v);
 
@@ -89,10 +91,23 @@ public:
     void setInfinyAtZero(int t);
 
 
+    bool checkDelaunay();
+
+    CercleC getCenter(int idt);
+
+    CercleC getCenter(Triangle *idt);
+
+    void drawCircle();
+
+    void buildVoronoiCenters();
+
+    void drawVoronoi();
+
 private:
     //! Attributs
     std::vector<Sommet> sommets;
     std::vector<Triangle> faces;
+    std::vector<VoronoiCell> voronoiCells;
 
     std::pair<int, int> getSommetOppose(int trangleId, int sommetPos);
 

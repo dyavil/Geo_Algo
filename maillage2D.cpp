@@ -184,6 +184,38 @@ void maillage2D::drawTriangles() {
 }
 
 
+void maillage2D::drawCircle()
+{
+
+    float tpi = 3.14159 * 2.0;
+   for (int i = 0; i < faces.size(); ++i) {
+       if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
+           glBegin(GL_LINE_LOOP);
+           for (int j=0; j < 60; j++)
+           {
+
+              CercleC c = getCenter(i);
+              glVertex2f(c.center.x + (c.radius * cos(j * tpi / 60)),c.center.y + (c.radius* sin(j * tpi / 60)));
+           }
+           glEnd();
+       }
+   }
+
+}
+
+void maillage2D::drawVoronoi(){
+    for(unsigned int i = 0; i < voronoiCells.size(); i++) {
+        glBegin(GL_LINE_LOOP);
+        for (int j = 0; j < voronoiCells[i].getPoints().size(); ++j) {
+            glVertex3f(voronoiCells[i].getPoints()[j].x, voronoiCells[i].getPoints()[j].y, voronoiCells[i].getPoints()[j].z);
+        }
+        glEnd();
+    }
+}
+
+
+
+
 void maillage2D::loadPoints(std::string filename, bool d3){
 
     std::ifstream file;
@@ -653,4 +685,104 @@ void maillage2D::setInfinyAtZero(int t) {
             faces[t].getVoisins()[0] = v2;
         }
     }
+}
+
+bool maillage2D::checkDelaunay(){
+    bool res = true;
+    for (int i = 0; i < faces.size(); ++i) {
+        if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
+            int currentSommet1 = getSommetOppose(i, 0).first;
+            int currentSommet2 = getSommetOppose(i, 1).first;
+            int currentSommet3 = getSommetOppose(i, 2).first;
+            Delaunay d;
+            if(currentSommet1 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet1].getPoint())){
+                //if (canSwap(currentVoisin1, i)) swapArete(currentVoisin1, i);
+                res = false;
+            }
+            if(currentSommet2 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet2].getPoint())){
+                //if (canSwap(currentVoisin2, i)) swapArete(currentVoisin2, i);
+                res = false;
+            }
+            if(currentSommet3 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet3].getPoint())){
+                //if (canSwap(currentVoisin3, i)) swapArete(currentVoisin3, i);
+                res = false;
+            }
+        }
+    }
+
+    for (int i = 0; i < faces.size(); ++i) {
+        if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
+            CercleC cer = getCenter(i);
+            Point cmp;
+            for (int j = 1; j < sommets.size(); ++j) {
+                if(j != faces[i].getSommets()[0] && j != faces[i].getSommets()[1] && j != faces[i].getSommets()[2]){
+                    if(cmp.dist(cer.center, sommets[j].coord) < cer.radius) res = false;
+                }
+            }
+        }
+    }
+    return res;
+}
+
+CercleC maillage2D::getCenter(int idt){
+    Point tp1, tp2, tp3;
+    Point res;
+    CercleC ret;
+    float d;
+    tp1 = sommets[faces[idt].getSommets()[0]].getPoint();
+    tp2 = sommets[faces[idt].getSommets()[1]].getPoint();
+    tp3 = sommets[faces[idt].getSommets()[2]].getPoint();
+    Vector3 a(tp1);
+    Vector3 b(tp2);
+    Vector3 c(tp3);
+    d = 2 *(a.x*(b.y-c.y)+b.x*(c.y-a.y)+c.x*(a.y-b.y));
+    res.x = (1/d)*((a.x*a.x+a.y*a.y)*(b.y-c.y)+(b.x*b.x+b.y*b.y)*(c.y-a.y)+(c.x*c.x+c.y*c.y)*(a.y-b.y));
+    res.y = (1/d)*((a.x*a.x+a.y*a.y)*(c.x-b.x)+(b.x*b.x+b.y*b.y)*(a.x-c.x)+(c.x*c.x+c.y*c.y)*(b.x-a.x));
+    ret.center = res;
+    float rad = sqrt((a.x-res.x)*(a.x-res.x)+(a.y-res.y)*(a.y-res.y));
+    ret.radius = rad;
+    return ret;
+}
+
+CercleC maillage2D::getCenter(Triangle *idt){
+    Point tp1, tp2, tp3;
+    Point res;
+    CercleC ret;
+    float d;
+    tp1 = sommets[idt->getSommets()[0]].getPoint();
+    tp2 = sommets[idt->getSommets()[1]].getPoint();
+    tp3 = sommets[idt->getSommets()[2]].getPoint();
+    Vector3 a(tp1);
+    Vector3 b(tp2);
+    Vector3 c(tp3);
+    d = 2 *(a.x*(b.y-c.y)+b.x*(c.y-a.y)+c.x*(a.y-b.y));
+    res.x = (1/d)*((a.x*a.x+a.y*a.y)*(b.y-c.y)+(b.x*b.x+b.y*b.y)*(c.y-a.y)+(c.x*c.x+c.y*c.y)*(a.y-b.y));
+    res.y = (1/d)*((a.x*a.x+a.y*a.y)*(c.x-b.x)+(b.x*b.x+b.y*b.y)*(a.x-c.x)+(c.x*c.x+c.y*c.y)*(b.x-a.x));
+    ret.center = res;
+    float rad = sqrt((a.x-res.x)*(a.x-res.x)+(a.y-res.y)*(a.y-res.y));
+    ret.radius = rad;
+    return ret;
+}
+
+
+void maillage2D::buildVoronoiCenters(){
+    sommet_iterator iit = sommet_begin();
+    while (iit != sommet_end()) {
+        VoronoiCell cell;
+        circulateur_de_faces circu = faces_incidente(*iit);
+
+        circu = circu.debut();
+        do{
+            //std::cout << "a, " << (*circu)->coord << std::endl;
+            if((*circu)->getSommets()[0] != 0 && (*circu)->getSommets()[1] != 0 && (*circu)->getSommets()[2] != 0){
+               CercleC cer= getCenter(*circu);
+               cell.getPoints().push_back(cer.center);
+            }
+           ++circu;
+
+        }while(circu!=circu.debut());
+        voronoiCells.push_back(cell);
+        iit++;
+    }
+
 }

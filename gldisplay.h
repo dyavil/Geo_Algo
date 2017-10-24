@@ -23,6 +23,7 @@ protected:
 
 private:
     void drawSierpinski();
+    void changeColor();
     Gasket gasket;
 
     float _angle;

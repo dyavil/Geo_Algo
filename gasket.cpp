@@ -6,11 +6,10 @@ Gasket::Gasket()
     // /home/dyavil/Documents/Master2/MaillageGeoAlgo/ToLoad
 
     //maillage.loadOff("/home/dyavil/Documents/Master2/MaillageGeoAlgo/ToLoad/cone.off");
-    maillage.loadPoints("/home/dyavil/Documents/Master2/MaillageGeoAlgo/geo-algo/off/livai.noff");
-    //maillage.loadPoints("/home/dyavil/Documents/Master2/MaillageGeoAlgo/geo-algo/off/points.pts", false);
+    //maillage.loadPoints("/home/dyavil/Documents/Master2/MaillageGeoAlgo/geo-algo/off/livai.noff");
+    maillage.loadPoints("/home/dyavil/Documents/Master2/MaillageGeoAlgo/geo-algo/off/points1.pts", false);
     bool infinite_loop = false;
     maillage.makeDelauney();
-
     //test circulators
     maillage2D::sommet_iterator iit = maillage.sommet_begin();
 
@@ -55,7 +54,10 @@ Gasket::Gasket()
     for(unsigned int i = 0; i < maillage.getFaces().size(); ++i) {
         std::cout << i << " | " << maillage.getFaces()[i] << std::endl;
     }
-    maillage.makeIncrementDelauney(1);
+    //maillage.makeIncrementDelauney(1);
+
+    std::cout << "test del : " << maillage.checkDelaunay() << std::endl;
+    maillage.buildVoronoiCenters();
     /*int ss[3] = {maillage.getFaces()[2].getSommets()[0], maillage.getFaces()[2].getSommets()[1], maillage.getFaces()[2].getSommets()[2]};
     Delaunay d;
     bool res = d.isOutCircle(maillage.getSommets()[ss[0]].getPoint(), maillage.getSommets()[ss[1]].getPoint(), maillage.getSommets()[ss[2]].getPoint(), Point(0, -4, 0));
@@ -75,7 +77,13 @@ Gasket::Gasket()
 
 void Gasket::draw()
 {
+
+    glColor3f(1.0, 1.0, 0.0);
     maillage.drawEdgesTriangulation();
+    glColor3f(1.0, 0.0, 0.0);
+    //maillage.drawCircle();
+    glColor3f(0.0, 1.0, 0.0);
+    maillage.drawVoronoi();
     //maillage.drawEdges();
 }
 
