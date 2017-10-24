@@ -12,6 +12,12 @@ public:
 
     void draw();
 
+    void drawTriangles();
+
+    void drawVoronoi();
+
+    void drawCercles();
+
 private:
     maillage2D maillage;
 };

@@ -4,6 +4,11 @@
 
 GLDisplay::GLDisplay(QWidget *parent) :
     QGLWidget(parent),
+    _zoom(1.0f),
+    triangleC(true),
+    voronoiC(false),
+    cerclesC(false),
+    gasket(),
     _angle(0.0f)
 {
 }
@@ -21,15 +26,49 @@ void GLDisplay::initializeGL()
     glColor3f(1.0, 1.0, 0.0);
 }
 
+void GLDisplay::zoomIn(){
+    _zoom = _zoom + 0.2f;
+    updateGL();
+}
+
+void GLDisplay::zoomOut(){
+    _zoom = _zoom - 0.2f;
+    updateGL();
+}
+
+Gasket & GLDisplay::getGasket(){
+    return gasket;
+}
+
+void GLDisplay::setShowTriangle(bool s){
+    triangleC = s;
+    updateGL();
+}
+
+void GLDisplay::setShowVoronoi(bool s){
+    voronoiC = s;
+    updateGL();
+}
+
+void GLDisplay::setShowCercles(bool s){
+    cerclesC = s;
+    updateGL();
+}
+
 void GLDisplay::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glLoadIdentity();
 
+    glScaled(_zoom, _zoom, _zoom);
+
     glRotatef(_angle, 0.0f, 1.0f, 0.0f);
 
-    gasket.draw();
+    if(triangleC)gasket.drawTriangles();
+    if(voronoiC) gasket.drawVoronoi();
+    if(cerclesC)gasket.drawCercles();
+    //gasket.draw();
 }
 
 void GLDisplay::resizeGL(int w, int h)

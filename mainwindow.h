@@ -18,9 +18,17 @@ public:
 private:
     Ui::MainWindow *ui;
     int color;
+    bool triangleC;
+    bool voronoiC;
+    bool cerclesC;
 
 public slots:
     void onButton();
+    void onTriangleCheck();
+    void onVoronoiCheck();
+    void onCercleCheck();
+    void onZoomInButton();
+    void onZoomOutButton();
 
 };
 
