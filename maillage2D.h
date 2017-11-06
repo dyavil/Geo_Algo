@@ -103,12 +103,19 @@ public:
 
     void drawVoronoi();
 
+    void buildCrust();
+
+    void drawCrust();
+
 private:
     //! Attributs
     std::vector<Sommet> sommets;
     std::vector<Triangle> faces;
+    std::vector<Point> voronoiPoints;
     std::vector<VoronoiCell> voronoiCells;
 
+    std::vector<Sommet> sommetsCrust;
+    int startCrust;
     std::pair<int, int> getSommetOppose(int trangleId, int sommetPos);
 
     bool canSwap(int idt1, int idt2);

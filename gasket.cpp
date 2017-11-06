@@ -58,6 +58,7 @@ Gasket::Gasket()
 
     std::cout << "test del : " << maillage.checkDelaunay() << std::endl;
     maillage.buildVoronoiCenters();
+    maillage.buildCrust();
     /*int ss[3] = {maillage.getFaces()[2].getSommets()[0], maillage.getFaces()[2].getSommets()[1], maillage.getFaces()[2].getSommets()[2]};
     Delaunay d;
     bool res = d.isOutCircle(maillage.getSommets()[ss[0]].getPoint(), maillage.getSommets()[ss[1]].getPoint(), maillage.getSommets()[ss[2]].getPoint(), Point(0, -4, 0));
@@ -77,23 +78,26 @@ Gasket::Gasket()
 
 void Gasket::draw()
 {
-    glColor3f(1.0, 1.0, 0.0);
+    /*glColor3f(1.0, 1.0, 0.0);
     maillage.drawEdgesTriangulation();
     glColor3f(1.0, 0.0, 0.0);
     maillage.drawCircle();
     glColor3f(0.0, 1.0, 0.0);
-    maillage.drawVoronoi();
+    maillage.drawVoronoi();*/
     //maillage.drawEdges();
+
 }
 
 void Gasket::drawTriangles(){
     glColor3f(1.0, 1.0, 0.0);
-    maillage.drawEdgesTriangulation();
+    //maillage.drawEdgesTriangulation();
+    maillage.drawEdges();
 }
 
 void Gasket::drawVoronoi(){
     glColor3f(0.0, 1.0, 0.0);
     maillage.drawVoronoi();
+    //maillage.drawCrust();
 }
 
 void Gasket::drawCercles(){

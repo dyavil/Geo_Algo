@@ -95,9 +95,9 @@ class VoronoiCell{
 public:
     VoronoiCell(){}
     ~VoronoiCell(){}
-    std::vector<Point> & getPoints(){return points;}
+    std::vector<int> & getPoints(){return points;}
 private:
-    std::vector<Point> points;
+    std::vector<int> points;
 };
 
 #endif // GEOMETRIE

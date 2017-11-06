@@ -161,10 +161,18 @@ void maillage2D::drawEdges() {
 // Affiche les lignes du maillage triangulé
 void maillage2D::drawEdgesTriangulation() {
     for(unsigned int i = 0; i < faces.size(); i++) {
+        if(faces[i].getSommets()[0] > startCrust) glColor3f(0.0, 1.0, 0.0);
+        else glColor3f(1.0, 1.0, 0.0);
         glBegin(GL_LINE_LOOP);
         if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
+            if(faces[i].getSommets()[0] > startCrust) glColor3f(0.0, 1.0, 0.0);
+            else glColor3f(1.0, 1.0, 0.0);
             glVertex3f(sommets[faces[i].getSommets()[0]].coord.x, sommets[faces[i].getSommets()[0]].coord.y, sommets[faces[i].getSommets()[0]].coord.z);
+            if(faces[i].getSommets()[1] > startCrust) glColor3f(0.0, 1.0, 0.0);
+            else glColor3f(1.0, 1.0, 0.0);
             glVertex3f(sommets[faces[i].getSommets()[1]].coord.x, sommets[faces[i].getSommets()[1]].coord.y, sommets[faces[i].getSommets()[1]].coord.z);
+            if(faces[i].getSommets()[2] > startCrust) glColor3f(0.0, 1.0, 0.0);
+            else glColor3f(1.0, 1.0, 0.0);
             glVertex3f(sommets[faces[i].getSommets()[2]].coord.x, sommets[faces[i].getSommets()[2]].coord.y, sommets[faces[i].getSommets()[2]].coord.z);
         }
         glEnd();
@@ -207,12 +215,23 @@ void maillage2D::drawVoronoi(){
     for(unsigned int i = 0; i < voronoiCells.size(); i++) {
         glBegin(GL_LINE_LOOP);
         for (int j = 0; j < voronoiCells[i].getPoints().size(); ++j) {
-            glVertex3f(voronoiCells[i].getPoints()[j].x, voronoiCells[i].getPoints()[j].y, voronoiCells[i].getPoints()[j].z);
+            glVertex3f(voronoiPoints[voronoiCells[i].getPoints()[j]].x, voronoiPoints[voronoiCells[i].getPoints()[j]].y, voronoiPoints[voronoiCells[i].getPoints()[j]].z);
         }
         glEnd();
     }
 }
 
+
+void maillage2D::drawCrust(){
+    std::cout << "size c " << sommetsCrust.size() << std::endl;
+    for (int i = 0; i < sommetsCrust.size(); ++i) {
+        glBegin(GL_LINES);
+        glVertex3f(sommetsCrust[i].getPoint().x, sommetsCrust[i].getPoint().y, sommetsCrust[i].getPoint().z);
+        i++;
+        glVertex3f(sommetsCrust[i].getPoint().x, sommetsCrust[i].getPoint().y, sommetsCrust[i].getPoint().z);
+        glEnd();
+    }
+}
 
 
 
@@ -766,6 +785,12 @@ CercleC maillage2D::getCenter(Triangle *idt){
 
 
 void maillage2D::buildVoronoiCenters(){
+    for (int i = 0; i < faces.size(); ++i) {
+        //if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
+            CercleC cer = getCenter(i);
+            voronoiPoints.push_back(cer.center);
+        //}
+    }
     sommet_iterator iit = sommet_begin();
     while (iit != sommet_end()) {
         VoronoiCell cell;
@@ -775,8 +800,9 @@ void maillage2D::buildVoronoiCenters(){
         do{
             //std::cout << "a, " << (*circu)->coord << std::endl;
             if((*circu)->getSommets()[0] != 0 && (*circu)->getSommets()[1] != 0 && (*circu)->getSommets()[2] != 0){
-               CercleC cer= getCenter(*circu);
-               cell.getPoints().push_back(cer.center);
+               //CercleC cer= getCenter(*circu);
+               int idt = *circu - &faces[0];
+               cell.getPoints().push_back(idt);
             }
            ++circu;
 
@@ -785,4 +811,74 @@ void maillage2D::buildVoronoiCenters(){
         iit++;
     }
 
+}
+
+
+void maillage2D::buildCrust(){
+    std::map<std::pair<int, int>, int> r;
+    std::vector<Sommet> tmp = sommets;
+    std::vector<Triangle> save = faces;
+    std::cout << "start" << std::endl;
+    int start = sommets.size();
+    for (int i = 0; i < voronoiPoints.size(); ++i) {
+        if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
+            unsigned int pos = inTriangle(voronoiPoints[i]);
+            sommets.push_back(Sommet(voronoiPoints[i]));
+        }
+    }
+    for (int i = start; i < sommets.size(); ++i) {
+        unsigned int pos = inTriangle(sommets[i].getPoint());
+
+        if(pos == (unsigned int)-1) {
+            addPointOut(i);
+        }
+        else {
+            addPointIn(pos, i);
+        }
+    }
+
+    makeDelauney();
+    for (int i = 0; i < faces.size(); ++i) {
+        if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
+        int id1 = std::max(faces[i].getSommets()[0], faces[i].getSommets()[1]);
+        int id2 = std::min(faces[i].getSommets()[0], faces[i].getSommets()[1]);
+        bool cont = false;
+        if(id2 < start && id1 < start){
+            //std::cout << "test" << std::endl;
+            cont = true;
+        }
+        auto it = r.find(std::make_pair(id1, id2));
+        if(cont && it == r.end()){
+            r.insert(std::pair<std::pair<int, int>, int> (std::make_pair(id1, id2), 0));
+            sommetsCrust.push_back(sommets[faces[i].getSommets()[0]]);
+            sommetsCrust.push_back(sommets[faces[i].getSommets()[1]]);
+        }
+        id1 = std::max(faces[i].getSommets()[1], faces[i].getSommets()[2]);
+        id2 = std::min(faces[i].getSommets()[1], faces[i].getSommets()[2]);
+        cont = false;
+        if(id2 < start && id1 < start) cont = true;
+        it = r.find(std::make_pair(id1, id2));
+        if(cont && it == r.end()){
+            r.insert(std::pair<std::pair<int, int>, int> (std::make_pair(id1, id2), 0));
+            sommetsCrust.push_back(sommets[faces[i].getSommets()[1]]);
+            std::cout << "put" <<std::endl;
+            sommetsCrust.push_back(sommets[faces[i].getSommets()[2]]);
+        }
+        id1 = std::max(faces[i].getSommets()[2], faces[i].getSommets()[0]);
+        id2 = std::min(faces[i].getSommets()[2], faces[i].getSommets()[0]);
+        cont = false;
+        if(id2 < start && id1 < start) cont = true;
+        it = r.find(std::make_pair(id1, id2));
+        if(cont && it == r.end()){
+            r.insert(std::pair<std::pair<int, int>, int> (std::make_pair(id1, id2), 0));
+            sommetsCrust.push_back(sommets[faces[i].getSommets()[2]]);
+            sommetsCrust.push_back(sommets[faces[i].getSommets()[0]]);
+        }
+    }
+    }
+    std::cout << "size c " << sommetsCrust.size() << std::endl;
+    //sommetsCrust = sommets;
+    startCrust = start;
+    //faces = save;
+    //sommets = tmp;
 }
