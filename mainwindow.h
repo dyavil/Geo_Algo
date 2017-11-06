@@ -21,12 +21,14 @@ private:
     bool triangleC;
     bool voronoiC;
     bool cerclesC;
+    bool crust;
 
 public slots:
     void onButton();
     void onTriangleCheck();
     void onVoronoiCheck();
     void onCercleCheck();
+    void onCrustCheck();
     void onZoomInButton();
     void onZoomOutButton();
 

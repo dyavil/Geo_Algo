@@ -643,38 +643,37 @@ bool maillage2D::canSwap(int t1, int t2){
     return true;
 }
 void maillage2D::makeIncrementDelauney(int np){
-    std::stack<std::pair<int, int>> toLook;
-    circulateur_de_faces circu = faces_incidente(sommets[np]);
-    //initialisation de la liste a traiter
-    circu = circu.debut();
-    do{
-        int next, toAdd, toAddOppose;
-        if(np == (*circu)->getSommets()[0]) {
-            next = (*circu)->getVoisins()[1];
-            toAddOppose = (*circu)->getVoisins()[0];
+    std::stack<int> toLook;
+    toLook.push(np);
+    while(!toLook.empty()){
+        //todo
+        int i = toLook.top();
+        if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
+            int currentSommet1 = getSommetOppose(i, 0).first;
+            int currentVoisin1 = getSommetOppose(i, 0).second;
+            int currentSommet2 = getSommetOppose(i, 1).first;
+            int currentVoisin2 = getSommetOppose(i, 1).second;
+            int currentSommet3 = getSommetOppose(i, 2).first;
+            int currentVoisin3 = getSommetOppose(i, 2).second;
+            Delaunay d;
+            bool next = true;
+            if(currentSommet1 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet1].getPoint())){
+                if (canSwap(currentVoisin1, i)) {
+                    next = false;
+                    swapArete(currentVoisin1, i);
+                }
+            }
+            if(next && currentSommet2 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet2].getPoint())){
+                if (canSwap(currentVoisin2, i)) {
+                    swapArete(currentVoisin2, i);
+                    next = false;
+                }
+            }
+            if(next && currentSommet3 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet3].getPoint())){
+                if (canSwap(currentVoisin3, i)) swapArete(currentVoisin3, i);
+            }
         }
-        else if(np == (*circu)->getSommets()[1]) {
-            next = (*circu)->getVoisins()[2];
-            toAddOppose = (*circu)->getVoisins()[1];
-        }
-        else{
-            next = (*circu)->getVoisins()[0];
-            toAddOppose = (*circu)->getVoisins()[2];
-        }
-        if(faces[next].getSommets()[0] == np) toAdd = faces[next].getVoisins()[2];
-        else if(faces[next].getSommets()[1] == np) toAdd = faces[next].getVoisins()[0];
-        else toAdd = faces[next].getVoisins()[1];
-        ++circu;
-        toLook.push(std::make_pair(toAdd, toAddOppose));
-    }while(circu!=circu.debut());
-    Delaunay d;
-    /*while(toLook.size() > 0){
-        if(isInvisible(toLook.top().first) || isInvisible(toLook.top().second)) toLook.pop();
-        //flip du premier
-        //if(d.isOutCircle())
-        //if(canSwap(toLook.top().first, toLook.top().second))
-        //ajout des voisins
-    }*/
+    }
 
 }
 
@@ -879,6 +878,6 @@ void maillage2D::buildCrust(){
     std::cout << "size c " << sommetsCrust.size() << std::endl;
     //sommetsCrust = sommets;
     startCrust = start;
-    //faces = save;
-    //sommets = tmp;
+    faces = save;
+    sommets = tmp;
 }

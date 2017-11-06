@@ -90,17 +90,21 @@ void Gasket::draw()
 
 void Gasket::drawTriangles(){
     glColor3f(1.0, 1.0, 0.0);
-    //maillage.drawEdgesTriangulation();
-    maillage.drawEdges();
+    maillage.drawEdgesTriangulation();
+   // maillage.drawEdges();
 }
 
 void Gasket::drawVoronoi(){
     glColor3f(0.0, 1.0, 0.0);
     maillage.drawVoronoi();
-    //maillage.drawCrust();
 }
 
 void Gasket::drawCercles(){
     glColor3f(1.0, 0.0, 0.0);
     maillage.drawCircle();
+}
+
+void Gasket::drawCrust(){
+    glColor3f(1.0, 0.0, 1.0);
+    maillage.drawCrust();
 }

@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     triangleC(true),
     voronoiC(false),
     cerclesC(false),
+    crust(false),
     color(0)
 {
     ui->setupUi(this);
@@ -16,11 +17,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->triangleCheck, SIGNAL(clicked(bool)), this, SLOT(onTriangleCheck()));
     connect(ui->voronoiCheck, SIGNAL(clicked(bool)), this, SLOT(onVoronoiCheck()));
     connect(ui->circonCheck, SIGNAL(clicked(bool)), this, SLOT(onCercleCheck()));
+    connect(ui->crustBox, SIGNAL(clicked(bool)), this, SLOT(onCrustCheck()));
     connect(ui->zoomInButton, SIGNAL(released()), this, SLOT(onZoomInButton()));
     connect(ui->zoomOutButton, SIGNAL(released()), this, SLOT(onZoomOutButton()));
     ui->widget->setShowTriangle(triangleC);
     ui->widget->setShowVoronoi(voronoiC);
     ui->widget->setShowCercles(cerclesC);
+    ui->widget->setShowCrust(crust);
 }
 
 MainWindow::~MainWindow()
@@ -46,8 +49,14 @@ void MainWindow::onCercleCheck(){
     if(cerclesC) cerclesC = false;
     else cerclesC = true;
     ui->widget->setShowCercles(cerclesC);
-
 }
+
+void MainWindow::onCrustCheck(){
+    if(crust) crust = false;
+    else crust = true;
+    ui->widget->setShowCrust(crust);
+}
+
 
 void MainWindow::onZoomInButton(){
     ui->widget->zoomIn();

@@ -105,6 +105,19 @@
      <string>Triangles</string>
     </property>
    </widget>
+   <widget class="QCheckBox" name="crustBox">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>210</y>
+      <width>85</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Crust</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

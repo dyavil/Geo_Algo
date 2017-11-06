@@ -18,6 +18,8 @@ public:
 
     void drawCercles();
 
+    void drawCrust();
+
 private:
     maillage2D maillage;
 };
