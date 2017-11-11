@@ -80,3 +80,26 @@ Sommet * circulateur_de_sommets::operator ++(){
 
     return current;
 }
+
+
+Triangle * marche_visibilite::operator *() {
+    return &(mesh->getFaces()[current]);
+}
+
+Triangle * marche_visibilite::operator ++() {
+
+    index++;
+
+    if(!mesh->isInside(point, current)) {
+        for(int i = 0; i < 3; ++i) {
+            Point p1 = mesh->getSommets()[mesh->getFaces()[current].getSommets()[(i+1)%3]].getPoint();
+            Point p2 = mesh->getSommets()[mesh->getFaces()[current].getSommets()[(i+2)%3]].getPoint();
+            if(mesh->isTrigo(p1, point, p2)) {
+                current = (mesh->getFaces()[current]).getVoisins()[i];
+                break;
+            }
+        }
+    }
+
+    return &(mesh->getFaces()[current]);
+}

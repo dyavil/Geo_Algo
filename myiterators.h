@@ -16,7 +16,6 @@ public:
     void getIdSommet();
 
 private:
-
     Sommet & pivot;
     Triangle * current;
     Triangle * start;
@@ -35,7 +34,6 @@ public:
     void getIdSommet();
 
 private:
-
     Sommet & pivot;
     Sommet * startP;
     Sommet * current;
@@ -47,6 +45,16 @@ private:
     int indexPivot;
 };
 
+class marche_visibilite{
+public:
+    marche_visibilite(Point & p, maillage2D * m) : point(p), current(0), mesh(m), index(0) {}
+    Triangle * operator ++();
+    Triangle * operator *();
 
+    Point point;
+    int current;
+    maillage2D * mesh;
+    int index;
+};
 
 #endif // MYITERATORS_H

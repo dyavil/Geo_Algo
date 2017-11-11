@@ -13,6 +13,11 @@ circulateur_de_sommets maillage2D::sommets_adjacents(Sommet & v){
     return r;
 }
 
+marche_visibilite maillage2D::marche_begin(Point p) {
+    marche_visibilite r = marche_visibilite(p, this);
+    return r;
+}
+
 // Donne le sommet correspondant a une arête
 int maillage2D::somArete(int tri, int i1, int i2) {
     for(int i = 0; i < 3; i++) {
@@ -223,7 +228,7 @@ void maillage2D::drawVoronoi(){
 
 
 void maillage2D::drawCrust(){
-    std::cout << "size c " << sommetsCrust.size() << std::endl;
+    //std::cout << "size c " << sommetsCrust.size() << std::endl;
     for (int i = 0; i < sommetsCrust.size(); ++i) {
         glBegin(GL_LINES);
         glVertex3f(sommetsCrust[i].getPoint().x, sommetsCrust[i].getPoint().y, sommetsCrust[i].getPoint().z);
@@ -406,6 +411,24 @@ int maillage2D::inTriangle(Point p1){
 }
 
 
+bool maillage2D::isInside(Point & p, int t) {
+
+    Vector3 cross[3];
+
+    for(int i = 0; i < 3; ++i) {
+        Vector3 vec1 = Vector3(p, sommets[faces[t].getSommets()[i]].getPoint());
+        Vector3 vec2 = Vector3(p, sommets[faces[t].getSommets()[(i+1)%3]].getPoint());
+        cross[i] = Vector3::cross(vec1, vec2);
+    }
+
+    if(cross[0].z < 0 && cross[1].z < 0 && cross[2].z) {
+        return true;
+    }
+
+    return false;
+}
+
+
 void maillage2D::addPointIn(int idTriangle, int p1){
     int oldp1 = faces[idTriangle].getSommets()[1];
     faces[idTriangle].getSommets()[1] = p1;
@@ -427,7 +450,7 @@ void maillage2D::addPointIn(int idTriangle, int p1){
     //maj point faces[idTriangle].getSommets[1] = p1; pointeur
     updateNeighbors(oldt0, idTriangle, faces.size()-1);
 
-    std::cout << oldt0 << std::endl << std::endl;
+    //std::cout << oldt0 << std::endl << std::endl;
 
 }
 
@@ -435,7 +458,6 @@ void maillage2D::updateNeighbors(int idtR, int idtO, int newid){
     if(faces[idtR].getVoisins()[0] == idtO) faces[idtR].getVoisins()[0] = newid;
     else if(faces[idtR].getVoisins()[1] == idtO) faces[idtR].getVoisins()[1] = newid;
     else if(faces[idtR].getVoisins()[2] == idtO) faces[idtR].getVoisins()[2] = newid;
-
 }
 
 
@@ -508,7 +530,7 @@ void maillage2D::addPointOut(int p0){
 
 
     if(orderPoints.size() > 0){
-        std::cout << "suuuuuuuuuuuuuuuuup0 " << idStart << std::endl;
+        //std::cout << "suuuuuuuuuuuuuuuuup0 " << idStart << std::endl;
         int st = faces.size()+1;
         int p1, p2;
 
@@ -619,9 +641,9 @@ void maillage2D::makeDelauney(){
 }
 
 
-bool maillage2D::isTrigo(int s1, int s2, int s3){
-    Vector3 u(sommets[s1].coord, sommets[s2].coord);
-    Vector3 v(sommets[s1].coord, sommets[s3].coord);
+bool maillage2D::isTrigo(Point p1, Point p2, Point p3){
+    Vector3 u(p1, p2);
+    Vector3 v(p1, p3);
     Vector3 uv = Vector3::cross(u, v);
     if(uv.z > 0) {
         return true;
@@ -634,13 +656,16 @@ bool maillage2D::canSwap(int t1, int t2){
     int ac1 = aretesCommunes.first;
     int ac2 = aretesCommunes.second;
     if(ac1 == -1 || ac2 == -1) { return false; }
-    if( isTrigo(faces[t1].getSommets()[ac1], faces[t1].getSommets()[(ac1+1)%3], faces[t2].getSommets()[ac2]) &&
 
-        isTrigo(faces[t2].getSommets()[ac2], faces[t2].getSommets()[(ac2+1)%3], faces[t1].getSommets()[ac1]) ) {
+    Point t1p1 = sommets[faces[t1].getSommets()[ac1]].getPoint();
+    Point t1p2 = sommets[faces[t1].getSommets()[(ac1+1)%3]].getPoint();
+    //Point t1p3 = sommets[faces[t2].getSommets()[(ac2+1)%3]].getPoint();
+    Point t2p1 = sommets[faces[t2].getSommets()[ac2]].getPoint();
+    Point t2p2 = sommets[faces[t2].getSommets()[(ac2+1)%3]].getPoint();
+    //Point t2p3 = sommets[faces[t1].getSommets()[(ac1+1)%3]].getPoint();
+    if(isTrigo(t1p1, t1p2, t2p2) && isTrigo(t2p1, t2p2, t1p2)) { return true; }
 
-        return true;
-    }
-    return true;
+    return false;
 }
 void maillage2D::makeIncrementDelauney(int np){
     std::stack<int> toLook;
@@ -817,7 +842,7 @@ void maillage2D::buildCrust(){
     std::map<std::pair<int, int>, int> r;
     std::vector<Sommet> tmp = sommets;
     std::vector<Triangle> save = faces;
-    std::cout << "start" << std::endl;
+    //std::cout << "start" << std::endl;
     int start = sommets.size();
     for (int i = 0; i < voronoiPoints.size(); ++i) {
         if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
@@ -860,7 +885,7 @@ void maillage2D::buildCrust(){
         if(cont && it == r.end()){
             r.insert(std::pair<std::pair<int, int>, int> (std::make_pair(id1, id2), 0));
             sommetsCrust.push_back(sommets[faces[i].getSommets()[1]]);
-            std::cout << "put" <<std::endl;
+            //std::cout << "put" <<std::endl;
             sommetsCrust.push_back(sommets[faces[i].getSommets()[2]]);
         }
         id1 = std::max(faces[i].getSommets()[2], faces[i].getSommets()[0]);
@@ -875,7 +900,7 @@ void maillage2D::buildCrust(){
         }
     }
     }
-    std::cout << "size c " << sommetsCrust.size() << std::endl;
+    //std::cout << "size c " << sommetsCrust.size() << std::endl;
     //sommetsCrust = sommets;
     startCrust = start;
     faces = save;

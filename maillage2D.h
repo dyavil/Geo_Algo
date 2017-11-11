@@ -12,6 +12,7 @@
 
 class circulateur_de_faces;
 class circulateur_de_sommets;
+class marche_visibilite;
 
 class maillage2D{
 
@@ -64,6 +65,8 @@ public:
     sommet_iterator sommet_begin() { return sommets.begin(); }
     sommet_iterator sommet_end() { return sommets.end(); }
 
+    marche_visibilite marche_begin(Point p);
+
     //! Lecture d'un fichier de points
     void loadPoints(std::string filename, bool d3=true);
 
@@ -72,6 +75,8 @@ public:
     void calculVoisin(std::map<std::pair<int, int>, int> & faceVoisine, int iSom[]);
 
     int inTriangle(Point p1);
+
+    bool isInside(Point & p, int t);
 
     void addPointIn(int idTriangle, int p1);
     void updateNeighbors(int idtR, int idtO, int newid);
@@ -83,7 +88,7 @@ public:
     //a refaire
     void makeIncrementDelauney(int np);
 
-    bool isTrigo(int s1, int s2, int s3);
+    bool isTrigo(Point p1, Point p2, Point p3);
 
     // Indique si un triangle a pour sommet le point infini
     bool isInvisible(int t);

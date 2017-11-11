@@ -7,7 +7,7 @@ Gasket::Gasket()
 
     //maillage.loadOff("/home/dyavil/Documents/Master2/MaillageGeoAlgo/ToLoad/cone.off");
     //maillage.loadPoints("/home/dyavil/Documents/Master2/MaillageGeoAlgo/geo-algo/off/livai.noff");
-    maillage.loadPoints("/home/dyavil/Documents/Master2/MaillageGeoAlgo/geo-algo/off/points1.pts", false);
+    maillage.loadPoints("/media/emeric/DATA/Documents/Etudes/M2/Geo_Algo/geo-algo/off/points1.pts", false);
     bool infinite_loop = false;
     maillage.makeDelauney();
     //test circulators
@@ -28,13 +28,13 @@ Gasket::Gasket()
                 break;
             }
         }while(circu!=circu.debut());
-        std::cout << i << "b, " << cnt << std::endl;
+        //std::cout << i << "b, " << cnt << std::endl;
         circulateur_de_sommets circu2 = maillage.sommets_adjacents(*iit);
         cnt=0;
 
         circu2 = circu2.debut();
         do{
-            std::cout << i << "a, " << (*circu2)->coord << std::endl;
+           //std::cout << i << "a, " << (*circu2)->coord << std::endl;
            ++circu2;
 
             cnt++;
@@ -43,8 +43,8 @@ Gasket::Gasket()
                 break;
             }
         }while(circu2!=circu2.debut());
-        std::cout << i << "a, " << (*circu2)->coord << std::endl;
-        std::cout << i << "a, " << cnt << std::endl;
+        //std::cout << i << "a, " << (*circu2)->coord << std::endl;
+        //std::cout << i << "a, " << cnt << std::endl;
         i++;
         iit++;
     }
@@ -52,11 +52,35 @@ Gasket::Gasket()
 
 
     for(unsigned int i = 0; i < maillage.getFaces().size(); ++i) {
-        std::cout << i << " | " << maillage.getFaces()[i] << std::endl;
+        //std::cout << i << " | " << maillage.getFaces()[i] << std::endl;
     }
+
+
+    // ============== Marche ================
+
+    Point pTest(-0.3, -0.3);
+
+    marche_visibilite marche = maillage.marche_begin(pTest);
+
+    for(int i = 0; i <= 20; ++i) {
+        Triangle * face = *marche;
+
+        std::cout << i << " | triangle n°" << marche.current << " = " << *face << std::endl;
+        for(int i = 0; i < 3; ++i) {
+            std::cout << "som : " << i << " | " << maillage.getSommets()[face->getSommets()[i]] << std::endl;
+        }
+
+        ++marche;
+    }
+
+    std::cout << "Le point (" << pTest.x << "," << pTest.y << ") est dans le triangle n°" << maillage.inTriangle(pTest) << std::endl;
+
+    // ======================================
+
+
     //maillage.makeIncrementDelauney(1);
 
-    std::cout << "test del : " << maillage.checkDelaunay() << std::endl;
+    //std::cout << "test del : " << maillage.checkDelaunay() << std::endl;
     maillage.buildVoronoiCenters();
     maillage.buildCrust();
     /*int ss[3] = {maillage.getFaces()[2].getSommets()[0], maillage.getFaces()[2].getSommets()[1], maillage.getFaces()[2].getSommets()[2]};
@@ -73,7 +97,6 @@ Gasket::Gasket()
         std::cout << i << " | " << maillage.faces[i] << std::endl;
     }
     */
-
 }
 
 void Gasket::draw()
@@ -85,7 +108,6 @@ void Gasket::draw()
     glColor3f(0.0, 1.0, 0.0);
     maillage.drawVoronoi();*/
     //maillage.drawEdges();
-
 }
 
 void Gasket::drawTriangles(){
