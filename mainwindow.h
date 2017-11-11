@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QFileDialog>
 
 namespace Ui {
 class MainWindow;
@@ -17,14 +18,13 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    int color;
     bool triangleC;
     bool voronoiC;
     bool cerclesC;
     bool crust;
 
 public slots:
-    void onButton();
+    void onLoad();
     void onTriangleCheck();
     void onVoronoiCheck();
     void onCercleCheck();

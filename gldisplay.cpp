@@ -5,11 +5,11 @@
 GLDisplay::GLDisplay(QWidget *parent) :
     QGLWidget(parent),
     _zoom(1.0f),
+    gasket(),
     triangleC(true),
     voronoiC(false),
     cerclesC(false),
-    crust(false),
-    gasket(),
+    crust(false),    
     _angle(0.0f)
 {
 }
@@ -39,6 +39,11 @@ void GLDisplay::zoomOut(){
 
 Gasket & GLDisplay::getGasket(){
     return gasket;
+}
+
+void GLDisplay::loadMesh(QString path) {
+    gasket = Gasket(path.toStdString());
+    updateGL();
 }
 
 void GLDisplay::setShowTriangle(bool s){

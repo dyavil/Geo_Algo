@@ -1,13 +1,27 @@
 #include "gasket.h"
 
-Gasket::Gasket()
+Gasket::Gasket(std::string path)
 {
-    // /media/emeric/DATA/Documents/Etudes/M2/Geo_Algo/geo-algo/off/
-    // /home/dyavil/Documents/Master2/MaillageGeoAlgo/ToLoad
+    std::cout << "Chargement en cours...";
 
-    //maillage.loadOff("/home/dyavil/Documents/Master2/MaillageGeoAlgo/ToLoad/cone.off");
-    //maillage.loadPoints("/home/dyavil/Documents/Master2/MaillageGeoAlgo/geo-algo/off/livai.noff");
-    maillage.loadPoints("/media/emeric/DATA/Documents/Etudes/M2/Geo_Algo/geo-algo/off/points1.pts", false);
+    std::string ext = path.substr(path.find_last_of(".") + 1);
+
+    if(ext == "off") {
+        maillage.loadOff(path);
+        maillage.drawTriangles();
+        return;
+    } else if(ext == "noff") {
+        maillage.loadPoints(path);
+    } else if(ext == "pts") {
+        maillage.loadPoints(path, false);
+    } else {
+        std::cout << "Erreur : extension inconnue !" << std::endl;
+        return;
+    }
+
+    std::cout << " terminé !" << std::endl;
+
+
     bool infinite_loop = false;
     maillage.makeDelauney();
     //test circulators
@@ -57,9 +71,7 @@ Gasket::Gasket()
 
 
     // ============== Marche ================
-
     Point pTest(-0.3, -0.3);
-
     marche_visibilite marche = maillage.marche_begin(pTest);
 
     for(int i = 0; i <= 20; ++i) {
@@ -74,7 +86,6 @@ Gasket::Gasket()
     }
 
     std::cout << "Le point (" << pTest.x << "," << pTest.y << ") est dans le triangle n°" << maillage.inTriangle(pTest) << std::endl;
-
     // ======================================
 
 

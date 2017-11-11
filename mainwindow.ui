@@ -27,17 +27,17 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="loadButton">
     <property name="geometry">
      <rect>
-      <x>560</x>
+      <x>550</x>
       <y>10</y>
-      <width>81</width>
+      <width>151</width>
       <height>22</height>
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>Charger un Fichier</string>
     </property>
    </widget>
    <widget class="QPushButton" name="zoomInButton">
@@ -125,7 +125,7 @@
      <x>0</x>
      <y>0</y>
      <width>727</width>
-     <height>19</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

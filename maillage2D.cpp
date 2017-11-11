@@ -250,8 +250,9 @@ void maillage2D::loadPoints(std::string filename, bool d3){
     file >> nbs;
     float x0, y0, z0;
     for(unsigned int i = 0; i < nbs; i++){
-        if(d3) file >> x0 >> y0 >> z0;
-        else {
+        if(d3) {
+            file >> x0 >> y0 >> z0;
+        } else {
             file >> x0 >> y0;
             z0 = 0;
         }

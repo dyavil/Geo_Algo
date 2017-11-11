@@ -8,12 +8,11 @@ MainWindow::MainWindow(QWidget *parent) :
     triangleC(true),
     voronoiC(false),
     cerclesC(false),
-    crust(false),
-    color(0)
+    crust(false)
 {
     ui->setupUi(this);
-    connect(ui->pushButton, SIGNAL(released()), this, SLOT(onButton()));
     ui->triangleCheck->setChecked(true);
+    connect(ui->loadButton, SIGNAL(released()), this, SLOT(onLoad()));
     connect(ui->triangleCheck, SIGNAL(clicked(bool)), this, SLOT(onTriangleCheck()));
     connect(ui->voronoiCheck, SIGNAL(clicked(bool)), this, SLOT(onVoronoiCheck()));
     connect(ui->circonCheck, SIGNAL(clicked(bool)), this, SLOT(onCercleCheck()));
@@ -66,9 +65,7 @@ void MainWindow::onZoomOutButton(){
     ui->widget->zoomOut();
 }
 
-void MainWindow::onButton() {
-    ++color;
-    /*float colors[4][3] = {{1.f, 1.f, 0.f}, {1.f, 0.f, 0.f}, {0.f, 1.f, 0.f}, {0.f, 0.f, 1.f}};
-    glColor3fv(colors[color % 4]);*/
-    glColor3f(1.0, 1.0, 1.0);
+void MainWindow::onLoad() {
+    QString filepath = QFileDialog::getOpenFileName(this, "Charger un fichier...", "../geo-algo/off/");
+    ui->widget->loadMesh(filepath);
 }

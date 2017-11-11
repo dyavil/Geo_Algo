@@ -68,7 +68,7 @@ public:
     marche_visibilite marche_begin(Point p);
 
     //! Lecture d'un fichier de points
-    void loadPoints(std::string filename, bool d3=true);
+    void loadPoints(std::string filename, bool d3 = true);
 
     void buildMaillage();
 

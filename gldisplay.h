@@ -1,9 +1,10 @@
 #ifndef GLDISPLAY_H
 #define GLDISPLAY_H
 
-#include <QGLWidget>
 #include <gasket.h>
+#include <QGLWidget>
 #include <QMouseEvent>
+#include <QApplication>
 
 class GLDisplay : public QGLWidget
 {
@@ -23,6 +24,7 @@ public:
 
     virtual Gasket & getGasket();
 
+    virtual void loadMesh(QString path);
     virtual void setShowTriangle(bool s);
     virtual void setShowVoronoi(bool s);
     virtual void setShowCercles(bool s);
@@ -36,6 +38,7 @@ private:
     void drawSierpinski();
     void changeColor();
     Gasket gasket;
+    std::string filepath;
 
     bool triangleC;
     bool voronoiC;

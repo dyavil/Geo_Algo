@@ -3,21 +3,16 @@
 
 #include "maillage2D.h"
 
-
-
 class Gasket
 {
 public:
-    Gasket();
+    Gasket() {}
+    Gasket(std::string path);
 
     void draw();
-
     void drawTriangles();
-
     void drawVoronoi();
-
     void drawCercles();
-
     void drawCrust();
 
 private:
