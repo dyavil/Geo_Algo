@@ -25,6 +25,8 @@ private:
 
 public slots:
     void onLoad();
+    void onWrite();
+    void onRestart();
     void onTriangleCheck();
     void onVoronoiCheck();
     void onCercleCheck();

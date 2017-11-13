@@ -111,6 +111,10 @@ void GLDisplay::mouseMoveEvent(QMouseEvent *event)
 
 void GLDisplay::mousePressEvent(QMouseEvent *event)
 {
-    if( event != NULL )
+    if( event != NULL ){
         _position = event->pos();
+        gasket.addPoint(_position.x()*((2*FRUSTUM_SIZE*(1/_zoom))/this->size().width())-FRUSTUM_SIZE*(1/_zoom), -_position.y()*((2*FRUSTUM_SIZE*(1/_zoom))/this->size().height())+FRUSTUM_SIZE*(1/_zoom));
+
+        updateGL();
+    }
 }

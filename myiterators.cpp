@@ -2,7 +2,7 @@
 
 
 void circulateur_de_faces::getIdSommet(){
-    for (int i = 0; i < mesh->getSommets().size(); ++i) {
+    for (unsigned int i = 0; i < mesh->getSommets().size(); ++i) {
         if(mesh->getSommets()[i] == pivot) {
             indexPivot = i;
         }
@@ -11,7 +11,7 @@ void circulateur_de_faces::getIdSommet(){
 
 
 void circulateur_de_sommets::getIdSommet(){
-    for (int i = 0; i < mesh->getSommets().size(); ++i) {
+    for (unsigned int i = 0; i < mesh->getSommets().size(); ++i) {
         if(mesh->getSommets()[i] == pivot) {
             indexPivot = i;
         }

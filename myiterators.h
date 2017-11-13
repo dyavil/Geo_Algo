@@ -15,10 +15,10 @@ public:
     Triangle * operator *(){return current;};
     void getIdSommet();
 
-private:
-    Sommet & pivot;
-    Triangle * current;
+private: 
     Triangle * start;
+    Triangle * current;
+    Sommet & pivot;
     maillage2D * mesh;
     int indexPivot;
 };
@@ -34,14 +34,14 @@ public:
     void getIdSommet();
 
 private:
-    Sommet & pivot;
-    Sommet * startP;
-    Sommet * current;
     Triangle * currentT;
     Triangle * start;
+    Sommet * current;
+    Sommet & pivot;
     maillage2D * mesh;
-
     bool last;
+    Sommet * startP;
+
     int indexPivot;
 };
 

@@ -20,8 +20,6 @@ Gasket::Gasket(std::string path)
     }
 
     std::cout << " terminé !" << std::endl;
-
-
     bool infinite_loop = false;
     //maillage.makeDelauney();
     //test circulators
@@ -71,7 +69,7 @@ Gasket::Gasket(std::string path)
 
 
     // ============== Marche ================
-    Point pTest(-0.3, -0.3);
+    /*Point pTest(-0.3, -0.3);
     marche_visibilite marche = maillage.marche_begin(pTest);
 
     for(int i = 0; i <= 20; ++i) {
@@ -85,29 +83,19 @@ Gasket::Gasket(std::string path)
         ++marche;
     }
 
-    std::cout << "Le point (" << pTest.x << "," << pTest.y << ") est dans le triangle n°" << maillage.inTriangle(pTest) << std::endl;
+    std::cout << "Le point (" << pTest.x << "," << pTest.y << ") est dans le triangle n°" << maillage.inTriangle(pTest) << std::endl;*/
     // ======================================
 
-
-    //maillage.makeIncrementDelauney(1);
 
     std::cout << "test del : " << maillage.checkDelaunay() << std::endl;
     maillage.buildVoronoiCenters();
     maillage.buildCrust();
-    /*int ss[3] = {maillage.getFaces()[2].getSommets()[0], maillage.getFaces()[2].getSommets()[1], maillage.getFaces()[2].getSommets()[2]};
-        Delaunay d;
-    bool res = d.isOutCircle(maillage.getSommets()[ss[0]].getPoint(), maillage.getSommets()[ss[1]].getPoint(), maillage.getSommets()[ss[2]].getPoint(), Point(0, -4, 0));
-    std::cout << "res : " << res << maillage.getFaces()[2] << std::endl;*/
 
-    //si res, en dehors du cercle
-    /*
-    maillage.swapArete(0, 1);
+}
 
-    std::cout << "=======================" << std::endl;
-    for(unsigned int i = 0; i < maillage.faces.size(); ++i) {
-        std::cout << i << " | " << maillage.faces[i] << std::endl;
-    }
-    */
+void Gasket::addPoint(float x, float y){
+    Point np = Point(x, y);
+    maillage.addPointUI(np);
 }
 
 void Gasket::draw()

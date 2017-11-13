@@ -35,8 +35,7 @@ protected:
     virtual void mousePressEvent ( QMouseEvent * event );
 
 private:
-    void drawSierpinski();
-    void changeColor();
+    float _zoom;
     Gasket gasket;
     std::string filepath;
 
@@ -47,7 +46,6 @@ private:
 
     float _angle;
     QPoint _position;
-    float _zoom;
     
 signals:
     

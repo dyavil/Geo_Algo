@@ -6,7 +6,7 @@
 class Gasket
 {
 public:
-    Gasket() {}
+    Gasket() {maillage.initEmpty();}
     Gasket(std::string path);
 
     void draw();
@@ -15,8 +15,12 @@ public:
     void drawCercles();
     void drawCrust();
 
+    void addPoint(float x, float y);
+    void exportFile(std::string filename){maillage.exportToFile(filename);}
+
 private:
     maillage2D maillage;
+    //void updateRapport()
 };
 
 #endif // GASKET_H

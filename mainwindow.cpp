@@ -13,6 +13,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->triangleCheck->setChecked(true);
     connect(ui->loadButton, SIGNAL(released()), this, SLOT(onLoad()));
+    connect(ui->saveButton, SIGNAL(released()), this, SLOT(onWrite()));
+    connect(ui->restartButton, SIGNAL(released()), this, SLOT(onRestart()));
     connect(ui->triangleCheck, SIGNAL(clicked(bool)), this, SLOT(onTriangleCheck()));
     connect(ui->voronoiCheck, SIGNAL(clicked(bool)), this, SLOT(onVoronoiCheck()));
     connect(ui->circonCheck, SIGNAL(clicked(bool)), this, SLOT(onCercleCheck()));
@@ -68,4 +70,14 @@ void MainWindow::onZoomOutButton(){
 void MainWindow::onLoad() {
     QString filepath = QFileDialog::getOpenFileName(this, "Charger un fichier...", "../geo-algo/off/");
     ui->widget->loadMesh(filepath);
+}
+
+void MainWindow::onWrite(){
+    QString filepath = QFileDialog::getSaveFileName(this, "Enregistrer un fichier...", "../geo-algo/off/");
+    ui->widget->getGasket().exportFile(filepath.toStdString());
+}
+
+void MainWindow::onRestart(){
+    ui->widget->getGasket() = Gasket();
+    ui->widget->updateGL();
 }

@@ -98,8 +98,6 @@ public:
     // Remet le point infini d'un triangle a la position 0
     void setInfinyAtZero(int t);
 
-    int getOtherSommet(int tp1, int tp2);
-
     std::pair<int, int> areteSommet(int idt, int ids);
 
     bool checkDelaunay();
@@ -117,6 +115,12 @@ public:
     void buildCrust();
 
     void drawCrust();
+
+    void addPointUI(Point np);
+
+    void initEmpty();
+
+    void exportToFile(std::string filename);
 
 private:
     //! Attributs

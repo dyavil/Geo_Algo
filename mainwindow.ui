@@ -118,6 +118,32 @@
      <string>Crust</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="saveButton">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>280</y>
+      <width>141</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Sauvegarder</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="restartButton">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>320</y>
+      <width>141</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Recommencer</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -125,7 +151,7 @@
      <x>0</x>
      <y>0</y>
      <width>727</width>
-     <height>25</height>
+     <height>19</height>
     </rect>
    </property>
   </widget>
