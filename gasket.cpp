@@ -23,7 +23,7 @@ Gasket::Gasket(std::string path)
 
 
     bool infinite_loop = false;
-    maillage.makeDelauney();
+    //maillage.makeDelauney();
     //test circulators
     maillage2D::sommet_iterator iit = maillage.sommet_begin();
 
@@ -91,11 +91,11 @@ Gasket::Gasket(std::string path)
 
     //maillage.makeIncrementDelauney(1);
 
-    //std::cout << "test del : " << maillage.checkDelaunay() << std::endl;
+    std::cout << "test del : " << maillage.checkDelaunay() << std::endl;
     maillage.buildVoronoiCenters();
     maillage.buildCrust();
     /*int ss[3] = {maillage.getFaces()[2].getSommets()[0], maillage.getFaces()[2].getSommets()[1], maillage.getFaces()[2].getSommets()[2]};
-    Delaunay d;
+        Delaunay d;
     bool res = d.isOutCircle(maillage.getSommets()[ss[0]].getPoint(), maillage.getSommets()[ss[1]].getPoint(), maillage.getSommets()[ss[2]].getPoint(), Point(0, -4, 0));
     std::cout << "res : " << res << maillage.getFaces()[2] << std::endl;*/
 

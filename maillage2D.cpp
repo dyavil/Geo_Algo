@@ -338,6 +338,10 @@ void maillage2D::buildMaillage(){
             else {
                 addPointIn(pos, i);
             }
+
+            std::cout << "before" << std::endl;
+            makeIncrementDelauney(i);
+            std::cout << "after" << std::endl;
         }
 
     }
@@ -664,43 +668,59 @@ bool maillage2D::canSwap(int t1, int t2){
     Point t2p1 = sommets[faces[t2].getSommets()[ac2]].getPoint();
     Point t2p2 = sommets[faces[t2].getSommets()[(ac2+1)%3]].getPoint();
     //Point t2p3 = sommets[faces[t1].getSommets()[(ac1+1)%3]].getPoint();
-    if(isTrigo(t1p1, t1p2, t2p2) && isTrigo(t2p1, t2p2, t1p2)) { return true; }
+    if(isTrigo(t1p1, t1p2, t2p1) && isTrigo(t2p1, t2p2, t1p1)) { return true; }
 
     return false;
 }
-void maillage2D::makeIncrementDelauney(int np){
-    std::stack<int> toLook;
-    toLook.push(np);
-    while(!toLook.empty()){
-        //todo
-        int i = toLook.top();
-        if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
-            int currentSommet1 = getSommetOppose(i, 0).first;
-            int currentVoisin1 = getSommetOppose(i, 0).second;
-            int currentSommet2 = getSommetOppose(i, 1).first;
-            int currentVoisin2 = getSommetOppose(i, 1).second;
-            int currentSommet3 = getSommetOppose(i, 2).first;
-            int currentVoisin3 = getSommetOppose(i, 2).second;
-            Delaunay d;
-            bool next = true;
-            if(currentSommet1 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet1].getPoint())){
-                if (canSwap(currentVoisin1, i)) {
-                    next = false;
-                    swapArete(currentVoisin1, i);
-                }
-            }
-            if(next && currentSommet2 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet2].getPoint())){
-                if (canSwap(currentVoisin2, i)) {
-                    swapArete(currentVoisin2, i);
-                    next = false;
-                }
-            }
-            if(next && currentSommet3 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet3].getPoint())){
-                if (canSwap(currentVoisin3, i)) swapArete(currentVoisin3, i);
+void maillage2D::makeIncrementDelauney(int s){
+    std::list<std::pair<int, int>> arretes;
+    std::set<std::pair<int, int>> done;
+    std::vector<int> initTriangles;
+    circulateur_de_faces circu = faces_incidente(sommets[s]);
+    do{
+        int t = *circu - &faces[0];
+        initTriangles.push_back(t);
+        ++circu;
+    }while(circu != circu.debut());
+    for(int i = 0; i < initTriangles.size(); i++){
+        std::pair<int, int> tmp = areteSommet(initTriangles[i], s);
+        int pos = somArete(initTriangles[i], tmp.first, tmp.second);
+        if(!isInvisible(initTriangles[i]) && !isInvisible(faces[initTriangles[i]].getVoisins()[pos])) arretes.push_back(std::make_pair(initTriangles[i], faces[initTriangles[i]].getVoisins()[pos]));
+    }
+    while(!arretes.empty()){
+        std::pair<int, int> current = arretes.front();
+        arretes.pop_front();
+        Delaunay d;
+        int pos = somAreteCommune(current.first, current.second).second;
+        //std::cout << faces[current.first].getSommets()[0] << ", " << faces[current.first].getSommets()[1] << ", " << faces[current.first].getSommets()[2] << ", " << pos << std::endl;
+        auto it = done.end();
+        if(!isInvisible(current.first) && !isInvisible(current.second) && !d.isOutCircle(sommets[faces[current.first].getSommets()[0]].getPoint(), sommets[faces[current.first].getSommets()[1]].getPoint(), sommets[faces[current.first].getSommets()[2]].getPoint(), sommets[faces[current.second].getSommets()[pos]].getPoint())){
+            if(canSwap(current.first, current.second)){
+                int v1 = faces[current.second].getVoisins()[(pos+1)%3];
+                int v2 = faces[current.second].getVoisins()[(pos+2)%3];
+                swapArete(current.first, current.second);
+                done.insert(std::pair<int, int> (std::make_pair(std::min(current.first, current.second), std::max(current.first, current.second))));
+                if(!isInvisible(v1) && done.find(std::make_pair(std::min(current.first, v1), std::max(current.first, v1))) == it) arretes.push_back(std::make_pair(current.first, v1));
+                if(!isInvisible(v2) && done.find(std::make_pair(std::min(current.second, v2), std::max(current.second, v2))) == it) arretes.push_back(std::make_pair(current.second, v2));
             }
         }
     }
 
+}
+
+
+std::pair<int, int> maillage2D::areteSommet(int idt, int ids){
+    if(ids == faces[idt].getSommets()[0]) return std::make_pair(faces[idt].getSommets()[1], faces[idt].getSommets()[2]);
+    else if(ids == faces[idt].getSommets()[1]) return std::make_pair(faces[idt].getSommets()[2], faces[idt].getSommets()[0]);
+    else if(ids == faces[idt].getSommets()[2]) return std::make_pair(faces[idt].getSommets()[0], faces[idt].getSommets()[1]);
+    else return std::make_pair(-1, -1);
+}
+
+int maillage2D::getOtherSommet(int tp1, int tp2){
+    std::pair<int, int> tmp = somAreteCommune(tp1, tp2);
+    if(faces[tp2].getSommets()[0] != tmp.first && faces[tp2].getSommets()[0] != tmp.second) return faces[tp2].getSommets()[0];
+    if(faces[tp2].getSommets()[1] != tmp.first && faces[tp2].getSommets()[1] != tmp.second) return faces[tp2].getSommets()[1];
+    return faces[tp2].getSommets()[2];
 }
 
 bool maillage2D::isInvisible(int t) {

@@ -5,6 +5,8 @@
 #include <iostream>
 #include <vector>
 #include <stack>
+#include <list>
+#include <set>
 #include <fstream>
 #include <map>
 #include "geometrie.h"
@@ -86,7 +88,7 @@ public:
     void makeDelauney();
 
     //a refaire
-    void makeIncrementDelauney(int np);
+    void makeIncrementDelauney(int s);
 
     bool isTrigo(Point p1, Point p2, Point p3);
 
@@ -96,6 +98,9 @@ public:
     // Remet le point infini d'un triangle a la position 0
     void setInfinyAtZero(int t);
 
+    int getOtherSommet(int tp1, int tp2);
+
+    std::pair<int, int> areteSommet(int idt, int ids);
 
     bool checkDelaunay();
 
