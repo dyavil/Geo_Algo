@@ -22,6 +22,7 @@ private:
     bool voronoiC;
     bool cerclesC;
     bool crust;
+    bool preCrust;
 
 public slots:
     void onLoad();
@@ -31,6 +32,7 @@ public slots:
     void onVoronoiCheck();
     void onCercleCheck();
     void onCrustCheck();
+    void onPreCrustCheck();
     void onZoomInButton();
     void onZoomOutButton();
 

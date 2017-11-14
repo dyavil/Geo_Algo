@@ -9,7 +9,8 @@ GLDisplay::GLDisplay(QWidget *parent) :
     triangleC(true),
     voronoiC(false),
     cerclesC(false),
-    crust(false),    
+    crust(false),
+    preCrust(false),
     _angle(0.0f)
 {
 }
@@ -66,6 +67,12 @@ void GLDisplay::setShowCrust(bool s){
     updateGL();
 }
 
+void GLDisplay::setShowPreCrust(bool s){
+    preCrust = s;
+    updateGL();
+}
+
+
 void GLDisplay::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -80,7 +87,12 @@ void GLDisplay::paintGL()
     if(voronoiC) gasket.drawVoronoi();
     if(cerclesC)gasket.drawCercles();
     if(crust)gasket.drawCrust();
+    if(preCrust)gasket.drawPreCrust();
     //gasket.draw();
+}
+
+void GLDisplay::setAngle(float a){
+    _angle = a;
 }
 
 void GLDisplay::resizeGL(int w, int h)

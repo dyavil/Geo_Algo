@@ -116,6 +116,8 @@ public:
 
     void drawCrust();
 
+    void drawEdgesPreCrust();
+
     void addPointUI(Point np);
 
     void initEmpty();
@@ -130,6 +132,8 @@ private:
     std::vector<VoronoiCell> voronoiCells;
 
     std::vector<Sommet> sommetsCrust;
+    std::vector<Sommet> sommetsPreCrust;
+    std::vector<Triangle> facesPreCrust;
     int startCrust;
     std::pair<int, int> getSommetOppose(int trangleId, int sommetPos);
 

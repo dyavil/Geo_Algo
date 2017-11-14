@@ -13,6 +13,7 @@ public:
     void drawTriangles();
     void drawVoronoi();
     void drawCercles();
+    void drawPreCrust();
     void drawCrust();
 
     void addPoint(float x, float y);

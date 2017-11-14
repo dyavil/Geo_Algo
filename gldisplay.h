@@ -29,6 +29,8 @@ public:
     virtual void setShowVoronoi(bool s);
     virtual void setShowCercles(bool s);
     virtual void setShowCrust(bool s);
+    virtual void setShowPreCrust(bool s);
+    virtual void setAngle(float a);
 
 protected:
     virtual void mouseMoveEvent ( QMouseEvent * event );
@@ -43,6 +45,7 @@ private:
     bool voronoiC;
     bool cerclesC;
     bool crust;
+    bool preCrust;
 
     float _angle;
     QPoint _position;

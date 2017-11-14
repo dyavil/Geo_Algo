@@ -125,6 +125,10 @@ void Gasket::drawCercles(){
     maillage.drawCircle();
 }
 
+void Gasket::drawPreCrust(){
+    maillage.drawEdgesPreCrust();
+}
+
 void Gasket::drawCrust(){
     glColor3f(1.0, 0.0, 1.0);
     maillage.drawCrust();

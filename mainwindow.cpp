@@ -8,7 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
     triangleC(true),
     voronoiC(false),
     cerclesC(false),
-    crust(false)
+    crust(false),
+    preCrust(false)
 {
     ui->setupUi(this);
     ui->triangleCheck->setChecked(true);
@@ -19,12 +20,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->voronoiCheck, SIGNAL(clicked(bool)), this, SLOT(onVoronoiCheck()));
     connect(ui->circonCheck, SIGNAL(clicked(bool)), this, SLOT(onCercleCheck()));
     connect(ui->crustBox, SIGNAL(clicked(bool)), this, SLOT(onCrustCheck()));
+    connect(ui->preCrustBox, SIGNAL(clicked(bool)), this, SLOT(onPreCrustCheck()));
     connect(ui->zoomInButton, SIGNAL(released()), this, SLOT(onZoomInButton()));
     connect(ui->zoomOutButton, SIGNAL(released()), this, SLOT(onZoomOutButton()));
     ui->widget->setShowTriangle(triangleC);
     ui->widget->setShowVoronoi(voronoiC);
     ui->widget->setShowCercles(cerclesC);
     ui->widget->setShowCrust(crust);
+    ui->widget->setShowPreCrust(preCrust);
 }
 
 MainWindow::~MainWindow()
@@ -58,6 +61,11 @@ void MainWindow::onCrustCheck(){
     ui->widget->setShowCrust(crust);
 }
 
+void MainWindow::onPreCrustCheck(){
+    if(preCrust) preCrust = false;
+    else preCrust = true;
+    ui->widget->setShowPreCrust(preCrust);
+}
 
 void MainWindow::onZoomInButton(){
     ui->widget->zoomIn();
@@ -73,11 +81,12 @@ void MainWindow::onLoad() {
 }
 
 void MainWindow::onWrite(){
-    QString filepath = QFileDialog::getSaveFileName(this, "Enregistrer un fichier...", "../geo-algo/off/");
+    QString filepath = QFileDialog::getSaveFileName(this, "Enregistrer un fichier...", "../geo-algo/off/", "*.noff");
     ui->widget->getGasket().exportFile(filepath.toStdString());
 }
 
 void MainWindow::onRestart(){
     ui->widget->getGasket() = Gasket();
+    ui->widget->setAngle(0);
     ui->widget->updateGL();
 }

@@ -166,19 +166,32 @@ void maillage2D::drawEdges() {
 // Affiche les lignes du maillage triangulé
 void maillage2D::drawEdgesTriangulation() {
     for(unsigned int i = 0; i < faces.size(); i++) {
-        if(faces[i].getSommets()[0] > startCrust) glColor3f(0.0, 1.0, 0.0);
-        else glColor3f(1.0, 1.0, 0.0);
+        glColor3f(1.0, 1.0, 0.0);
         glBegin(GL_LINE_LOOP);
         if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
-            if(faces[i].getSommets()[0] > startCrust) glColor3f(0.0, 1.0, 0.0);
-            else glColor3f(1.0, 1.0, 0.0);
             glVertex3f(sommets[faces[i].getSommets()[0]].coord.x, sommets[faces[i].getSommets()[0]].coord.y, sommets[faces[i].getSommets()[0]].coord.z);
-            if(faces[i].getSommets()[1] > startCrust) glColor3f(0.0, 1.0, 0.0);
-            else glColor3f(1.0, 1.0, 0.0);
             glVertex3f(sommets[faces[i].getSommets()[1]].coord.x, sommets[faces[i].getSommets()[1]].coord.y, sommets[faces[i].getSommets()[1]].coord.z);
-            if(faces[i].getSommets()[2] > startCrust) glColor3f(0.0, 1.0, 0.0);
-            else glColor3f(1.0, 1.0, 0.0);
             glVertex3f(sommets[faces[i].getSommets()[2]].coord.x, sommets[faces[i].getSommets()[2]].coord.y, sommets[faces[i].getSommets()[2]].coord.z);
+        }
+        glEnd();
+    }
+}
+
+void maillage2D::drawEdgesPreCrust() {
+    for(unsigned int i = 0; i < facesPreCrust.size(); i++) {
+        if(facesPreCrust[i].getSommets()[0] >= startCrust) glColor3f(0.0, 1.0, 0.0);
+        else glColor3f(1.0, 1.0, 0.0);
+        glBegin(GL_LINE_LOOP);
+        if(facesPreCrust[i].getSommets()[0] != 0 && facesPreCrust[i].getSommets()[1] != 0 && facesPreCrust[i].getSommets()[2] != 0){
+            if(facesPreCrust[i].getSommets()[0] >= startCrust) glColor3f(0.0, 1.0, 0.0);
+            else glColor3f(1.0, 1.0, 0.0);
+            glVertex3f(sommetsPreCrust[facesPreCrust[i].getSommets()[0]].coord.x, sommetsPreCrust[facesPreCrust[i].getSommets()[0]].coord.y, sommetsPreCrust[facesPreCrust[i].getSommets()[0]].coord.z);
+            if(facesPreCrust[i].getSommets()[1] >= startCrust) glColor3f(0.0, 1.0, 0.0);
+            else glColor3f(1.0, 1.0, 0.0);
+            glVertex3f(sommetsPreCrust[facesPreCrust[i].getSommets()[1]].coord.x, sommetsPreCrust[facesPreCrust[i].getSommets()[1]].coord.y, sommetsPreCrust[facesPreCrust[i].getSommets()[1]].coord.z);
+            if(facesPreCrust[i].getSommets()[2] >= startCrust) glColor3f(0.0, 1.0, 0.0);
+            else glColor3f(1.0, 1.0, 0.0);
+            glVertex3f(sommetsPreCrust[facesPreCrust[i].getSommets()[2]].coord.x, sommetsPreCrust[facesPreCrust[i].getSommets()[2]].coord.y, sommetsPreCrust[facesPreCrust[i].getSommets()[2]].coord.z);
         }
         glEnd();
     }
@@ -910,7 +923,6 @@ void maillage2D::buildCrust(){
          makeIncrementDelauney(i);
     }
 
-    //makeDelauney();
     for (unsigned int i = 0; i < faces.size(); ++i) {
         if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
         int id1 = std::max(faces[i].getSommets()[0], faces[i].getSommets()[1]);
@@ -950,8 +962,9 @@ void maillage2D::buildCrust(){
     }
     }
     //std::cout << "size c " << sommetsCrust.size() << std::endl;
-    //sommetsCrust = sommets;
+    sommetsPreCrust = sommets;
     startCrust = start;
+    facesPreCrust = faces;
     faces = save;
     sommets = tmp;
 }
