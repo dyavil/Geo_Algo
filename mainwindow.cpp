@@ -76,7 +76,7 @@ void MainWindow::onZoomOutButton(){
 }
 
 void MainWindow::onLoad() {
-    QString filepath = QFileDialog::getOpenFileName(this, "Charger un fichier...", "../geo-algo/off/");
+    QString filepath = QFileDialog::getOpenFileName(this, "Charger un fichier...", "../geo-algo/points/");
     ui->widget->loadMesh(filepath);
 }
 

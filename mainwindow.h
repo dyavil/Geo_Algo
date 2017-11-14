@@ -35,7 +35,6 @@ public slots:
     void onPreCrustCheck();
     void onZoomInButton();
     void onZoomOutButton();
-
 };
 
 #endif // MAINWINDOW_H

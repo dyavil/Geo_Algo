@@ -48,12 +48,7 @@ private:
     bool preCrust;
 
     float _angle;
-    QPoint _position;
-    
-signals:
-    
-public slots:
-    
+    QPoint _position;    
 };
 
 #endif // GLDISPLAY_H

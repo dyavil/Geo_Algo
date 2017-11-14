@@ -12,7 +12,7 @@ Gasket::Gasket(std::string path)
         return;
     } else if(ext == "noff") {
         maillage.loadPoints(path);
-    } else if(ext == "pts") {
+    } else if(ext == "pts" || ext == "tri") {
         maillage.loadPoints(path, false);
     } else {
         std::cout << "Erreur : extension inconnue !" << std::endl;
@@ -98,21 +98,9 @@ void Gasket::addPoint(float x, float y){
     maillage.addPointUI(np);
 }
 
-void Gasket::draw()
-{
-    /*glColor3f(1.0, 1.0, 0.0);
-    maillage.drawEdgesTriangulation();
-    glColor3f(1.0, 0.0, 0.0);
-    maillage.drawCircle();
-    glColor3f(0.0, 1.0, 0.0);
-    maillage.drawVoronoi();*/
-    //maillage.drawEdges();
-}
-
 void Gasket::drawTriangles(){
     glColor3f(1.0, 1.0, 0.0);
     maillage.drawEdgesTriangulation();
-   // maillage.drawEdges();
 }
 
 void Gasket::drawVoronoi(){
