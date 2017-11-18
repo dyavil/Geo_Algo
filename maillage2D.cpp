@@ -501,7 +501,7 @@ void maillage2D::buildMaillage(){
             first=false;
         }else{
             //ajout du reste des points
-
+            //test de la position du point (-1) si exterieur au maillage
             unsigned int pos = inTriangle(sommets[i].getPoint());
             if(pos == (unsigned int)-1) {
                 addPointOut(i);
@@ -510,9 +510,8 @@ void maillage2D::buildMaillage(){
                 addPointIn(pos, i);
             }
 
-            //std::cout << "before" << std::endl;
+            //mise a jour en delaunay
             makeIncrementDelauney(i);
-            //std::cout << "after" << std::endl;
         }
     }
 }
@@ -550,6 +549,7 @@ void maillage2D::calculVoisin(std::map<std::pair<int, int>, int> & faceVoisine, 
 
 
 void maillage2D::addPointIn(int idTriangle, int p1){
+    //ajout de p1 dans idTriangle et mise a jour des voisins
     int oldp1 = faces[idTriangle].getSommets()[1];
     faces[idTriangle].getSommets()[1] = p1;
 
@@ -570,7 +570,6 @@ void maillage2D::addPointIn(int idTriangle, int p1){
     //maj point faces[idTriangle].getSommets[1] = p1; pointeur
     updateNeighbors(oldt0, idTriangle, faces.size()-1);
 
-    //std::cout << oldt0 << std::endl << std::endl;
 
 }
 
@@ -652,7 +651,7 @@ void maillage2D::addPointOut(int p0){
     }
 
     if(orderPoints.size() > 0){
-        //std::cout << "suuuuuuuuuuuuuuuuup0 " << idStart << std::endl;
+
         int st = faces.size()+1;
         int p1, p2;
 
@@ -761,8 +760,11 @@ void maillage2D::makeDelauney(){
 }
 
 void maillage2D::makeIncrementDelauney(int s){
+    //liste a traiter
     std::list<std::pair<int, int>> arretes;
+    //liste traitée
     std::set<std::pair<int, int>> done;
+    //triangles initiaux
     std::vector<int> initTriangles;
     circulateur_de_faces circu = faces_incidente(sommets[s]);
     do{
@@ -775,13 +777,16 @@ void maillage2D::makeIncrementDelauney(int s){
         int pos = somArete(initTriangles[i], tmp.first, tmp.second);
         if(!isInvisible(initTriangles[i]) && !isInvisible(faces[initTriangles[i]].getVoisins()[pos])) arretes.push_back(std::make_pair(initTriangles[i], faces[initTriangles[i]].getVoisins()[pos]));
     }
+    //tant qu'il reste des arretes à traiter
     while(!arretes.empty()){
         std::pair<int, int> current = arretes.front();
         arretes.pop_front();
         Delaunay d;
         int pos = somAreteCommune(current.first, current.second).second;
-        //std::cout << faces[current.first].getSommets()[0] << ", " << faces[current.first].getSommets()[1] << ", " << faces[current.first].getSommets()[2] << ", " << pos << std::endl;
+
         auto it = done.end();
+        //si le triangle n'est pas lié au point infini et n'est pas delaunay on test si le swap est possible et agit en fonction
+        //on ajoute ensuite les nouvelles aretes candidates au flip dans la liste a traiter
         if(!isInvisible(current.first) && !isInvisible(current.second) && !d.isOutCircle(sommets[faces[current.first].getSommets()[0]].getPoint(), sommets[faces[current.first].getSommets()[1]].getPoint(), sommets[faces[current.first].getSommets()[2]].getPoint(), sommets[faces[current.second].getSommets()[pos]].getPoint())){
             if(canSwap(current.first, current.second)){
                 int v1 = faces[current.second].getVoisins()[(pos+1)%3];
@@ -798,6 +803,7 @@ void maillage2D::makeIncrementDelauney(int s){
 
 bool maillage2D::checkDelaunay(){
     bool res = true;
+    //verification avec calcul de determinant
     for (unsigned int i = 0; i < faces.size(); ++i) {
         if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
             int currentSommet1 = getSommetOppose(i, 0).first;
@@ -819,6 +825,7 @@ bool maillage2D::checkDelaunay(){
         }
     }
 
+    //verification par cercles circonscrits
     for (unsigned int i = 0; i < faces.size(); ++i) {
         if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
             CercleC cer = getCenter(i);
@@ -918,6 +925,7 @@ void maillage2D::buildCrust(){
             sommets.push_back(Sommet(voronoiPoints[i]));
         }
     }
+    //on créer le nouveau maillage
     for (unsigned int i = start; i < sommets.size(); ++i) {
         unsigned int pos = inTriangle(sommets[i].getPoint());
 
@@ -929,7 +937,7 @@ void maillage2D::buildCrust(){
         }
          makeIncrementDelauney(i);
     }
-
+    //on applique l'algorithme crust
     for (unsigned int i = 0; i < faces.size(); ++i) {
         if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
         int id1 = std::max(faces[i].getSommets()[0], faces[i].getSommets()[1]);
@@ -968,7 +976,7 @@ void maillage2D::buildCrust(){
         }
     }
     }
-    //std::cout << "size c " << sommetsCrust.size() << std::endl;
+    //allocation des buffers
     sommetsPreCrust = sommets;
     startCrust = start;
     facesPreCrust = faces;
