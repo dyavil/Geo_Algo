@@ -114,7 +114,7 @@ public:
     bool isInvisible(int t);
 
     //! Indique si les points sont dans le sens trigo
-    bool isTrigo(Point p1, Point p2, Point p3);
+    bool isTrigo(Point & p1, Point & p2, Point & p3);
 
     //! Indique si le point p est contenu dans le triangle t
     bool isInside(Point & p, int t);

@@ -150,7 +150,7 @@ void maillage2D::buildMaillage(){
         if(first) {
             if(sommets.size() < 4 ) { return; }
 
-            bool trigo = isTrigo(sommets[i].getPoint(), sommets[i+1].getPoint(), sommets[i+2].getPoint());
+            bool trigo = isTrigo(sommets[i].coord, sommets[i+1].coord, sommets[i+2].coord);
 
             if(trigo){
                 faces.push_back(Triangle(i, i+1, i+2, 3, 1, 2));
@@ -361,7 +361,7 @@ bool maillage2D::isInvisible(int t) {
 }
 
 // Indique si les points sont dans le sens trigo
-bool maillage2D::isTrigo(Point p1, Point p2, Point p3){
+bool maillage2D::isTrigo(Point & p1, Point & p2, Point & p3){
     Vector3 u(p1, p2);
     Vector3 v(p1, p3);
     Vector3 uv = Vector3::cross(u, v);
@@ -373,15 +373,12 @@ bool maillage2D::isTrigo(Point p1, Point p2, Point p3){
 
 // Indique si le point p est contenu dans le triangle t
 bool maillage2D::isInside(Point & p, int t) {
-    Vector3 cross[3];
-    for(int i = 0; i < 3; ++i) {
-        Vector3 vec1 = Vector3(p, sommets[faces[t].getSommets()[i]].getPoint());
-        Vector3 vec2 = Vector3(p, sommets[faces[t].getSommets()[(i+1)%3]].getPoint());
-        cross[i] = Vector3::cross(vec1, vec2);
-    }
-    if(cross[0].z > 0 && cross[1].z > 0 && cross[2].z > 0) {
-        return true;
-    }
+    Point p1 = sommets[faces[t].getSommets()[0]].getPoint();
+    Point p2 = sommets[faces[t].getSommets()[1]].getPoint();
+    Point p3 = sommets[faces[t].getSommets()[2]].getPoint();
+
+    if(isTrigo(p, p1, p2) && isTrigo(p, p2, p3) && isTrigo(p, p3, p1)) { return true; }
+
     return false;
 }
 
