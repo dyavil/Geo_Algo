@@ -108,7 +108,7 @@ public:
     std::pair<int, int> somAreteCommune(int t1, int t2);
 
     //! Donne l'index du sommet opposé de la position p dans le triangle tId
-    std::pair<int, int> getSommetOppose(int trangleId, int sommetPos);
+    int getSommetOppose(int tId, int p);
 
     //! Indique si un triangle a pour sommet le point infini
     bool isInvisible(int t);

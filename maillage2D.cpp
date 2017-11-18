@@ -343,33 +343,11 @@ std::pair<int, int> maillage2D::somAreteCommune(int t1, int t2) {
 }
 
 // Donne l'index du sommet opposé de la position p dans le triangle tId
-std::pair<int, int> maillage2D::getSommetOppose(int triangleId, int sommetPos){
-    int ids = -1;
-    int tId;
-    int sommmet1Arrete;
-    int sommmet2Arrete;
-    if(sommetPos == 0) {
-        tId = faces[triangleId].getVoisins()[0];
-        //std::cout << faces[tId] << "\n" << faces[triangleId] <<std::endl;
-        sommmet1Arrete = faces[triangleId].getSommets()[1];
-        sommmet2Arrete = faces[triangleId].getSommets()[2];
-    }
-    else if(sommetPos == 1) {
-        tId = faces[triangleId].getVoisins()[1];
-
-        //std::cout << faces[tId] << "\n" << faces[triangleId] <<std::endl;
-        sommmet1Arrete = faces[triangleId].getSommets()[2];
-        sommmet2Arrete = faces[triangleId].getSommets()[0];
-    }
-    else {
-        tId = faces[triangleId].getVoisins()[2];
-        sommmet1Arrete = faces[triangleId].getSommets()[0];
-        sommmet2Arrete = faces[triangleId].getSommets()[1];
-    }
-    if(faces[tId].getSommets()[0] != sommmet1Arrete && faces[tId].getSommets()[0] != sommmet2Arrete) ids = faces[tId].getSommets()[0];
-    else if(faces[tId].getSommets()[1] != sommmet1Arrete && faces[tId].getSommets()[1] != sommmet2Arrete) ids = faces[tId].getSommets()[1];
-    else ids = faces[tId].getSommets()[2];
-    return std::make_pair(ids, tId);
+int maillage2D::getSommetOppose(int tId, int p) {
+    int triOppose = faces[tId].getVoisins()[p];
+    std::pair<int, int> arete = somAreteCommune(tId, triOppose);
+    int idSom = faces[triOppose].getSommets()[arete.second];
+    return idSom;
 }
 
 // Indique si un triangle a pour sommet le point infini
@@ -671,13 +649,17 @@ void maillage2D::makeDelauney(){
         for (unsigned int i = 0; i < faces.size(); ++i) {
             restart = false;
             if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
-                int currentSommet1 = getSommetOppose(i, 0).first;
-                int currentVoisin1 = getSommetOppose(i, 0).second;
-                int currentSommet2 = getSommetOppose(i, 1).first;
-                int currentVoisin2 = getSommetOppose(i, 1).second;
-                int currentSommet3 = getSommetOppose(i, 2).first;
-                int currentVoisin3 = getSommetOppose(i, 2).second;
+                int currentSommet1 = getSommetOppose(i, 0);
+                int currentVoisin1 = faces[i].getVoisins()[0];
+
+                int currentSommet2 = getSommetOppose(i, 1);
+                int currentVoisin2 = faces[i].getVoisins()[1];
+
+                int currentSommet3 = getSommetOppose(i, 2);
+                int currentVoisin3 = faces[i].getVoisins()[2];
+
                 Delaunay d;
+
                 if(currentSommet1 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet1].getPoint())) {
                     if (canSwap(currentVoisin1, i)) swapArete(currentVoisin1, i);
                     restart = true;
@@ -737,9 +719,9 @@ bool maillage2D::checkDelaunay(){
     bool res = true;
     for (unsigned int i = 0; i < faces.size(); ++i) {
         if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
-            int currentSommet1 = getSommetOppose(i, 0).first;
-            int currentSommet2 = getSommetOppose(i, 1).first;
-            int currentSommet3 = getSommetOppose(i, 2).first;
+            int currentSommet1 = getSommetOppose(i, 0);
+            int currentSommet2 = getSommetOppose(i, 1);
+            int currentSommet3 = getSommetOppose(i, 2);
             Delaunay d;
             if(currentSommet1 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet1].getPoint())){
                 res = false;
