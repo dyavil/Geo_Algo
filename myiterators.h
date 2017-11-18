@@ -50,6 +50,8 @@ private:
 class marche_visibilite{
 public:
     marche_visibilite(Point & p, maillage2D * m) : point(p), current(0), mesh(m), index(0) {}
+    int get_current() { return current; }
+    int get_index() { return index; }
     Triangle * operator ++();
     Triangle * operator *();
 

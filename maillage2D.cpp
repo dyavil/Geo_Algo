@@ -379,14 +379,34 @@ bool maillage2D::isInside(Point & p, int t) {
         Vector3 vec2 = Vector3(p, sommets[faces[t].getSommets()[(i+1)%3]].getPoint());
         cross[i] = Vector3::cross(vec1, vec2);
     }
-    if(cross[0].z < 0 && cross[1].z < 0 && cross[2].z) {
+    if(cross[0].z > 0 && cross[1].z > 0 && cross[2].z > 0) {
         return true;
     }
     return false;
 }
 
 // Retourne l'index du triangle contenant le point p1
-int maillage2D::inTriangle(Point p1){
+int maillage2D::inTriangle(Point p){
+
+    marche_visibilite it = marche_begin(p);
+    int index1 = -1;
+    int index2 = it.get_current();
+    unsigned int cpt = it.get_index();
+
+    while (index1 != index2 && cpt < faces.size()) {
+        ++it;
+
+        int t = it.get_current();
+        if(isInside(p, t)) { return t; }
+
+        index1 = index2;
+        index2 = it.get_current();
+        cpt = it.get_index();
+    }
+
+    return -1;
+
+    /*
     int triangleId = -1;
     for(unsigned int i = 0; i < faces.size(); ++i){
         bool cont = true;
@@ -417,6 +437,7 @@ int maillage2D::inTriangle(Point p1){
         }
     }
     return triangleId;
+    */
 }
 
 // Remet le point infini d'un triangle a la position 0 (inutilisé)
