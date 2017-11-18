@@ -113,7 +113,7 @@ public:
 };
 
 /*!
- * \class VoronoïCell
+ * \class VoronoiCell
  * \brief Classe représentant une cellule de voronoï
 */
 class VoronoiCell{

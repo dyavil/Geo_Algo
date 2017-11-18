@@ -19,4 +19,5 @@ test files : .off/*, ./points/*
 
 Instructions : Utiliser QtCreator pour compiler.
                Pour générer la documentation : doxygen Doxyfile (générée dans doc/)
+               Dans l'interface, un clique droit permet d'ajouter un point
 
