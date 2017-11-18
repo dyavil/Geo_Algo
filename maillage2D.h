@@ -64,6 +64,12 @@ public:
     //! Initialisation a partir d'un fichier .pts
     void loadPoints(std::string filename, bool d3 = true);
 
+    //!
+    void calculVoisin(std::map<std::pair<int, int>, int> & faceVoisine, int iSom[]);
+
+    //! Construit le maillage à partir des points
+    void buildMaillage();
+
     //! Exporte les points vers un fichier
     void exportToFile(std::string filename);
 
@@ -84,6 +90,7 @@ public:
     //! Affiche les cellules de Voronoï
     void drawVoronoi();
 
+    //!
     void drawEdgesPreCrust();
 
     //! Affiche Crust
@@ -100,6 +107,12 @@ public:
     //! Donnes les positions de l'arête commune a 2 triangles
     std::pair<int, int> somAreteCommune(int t1, int t2);
 
+    //! Donne l'index du sommet opposé de la position p dans le triangle tId
+    std::pair<int, int> getSommetOppose(int trangleId, int sommetPos);
+
+    //! Indique si un triangle a pour sommet le point infini
+    bool isInvisible(int t);
+
     //! Indique si les points sont dans le sens trigo
     bool isTrigo(Point p1, Point p2, Point p3);
 
@@ -109,11 +122,20 @@ public:
     //! Retourne l'index du triangle contenant le point p1
     int inTriangle(Point p1);
 
-    //! Indique si un triangle a pour sommet le point infini
-    bool isInvisible(int t);
-
     //! Remet le point infini d'un triangle a la position 0 (inutilisé)
     void setInfinyAtZero(int t);
+
+    //!
+    void updateNeighbors(int idtR, int idtO, int newid);
+
+    //! Ajoute un point a l'intérieur du maillage
+    void addPointIn(int idTriangle, int p1);
+
+    //! Ajoute un point a l'extérieur du maillage
+    void addPointOut(int p0);
+
+    //! Ajoute un point au maillage
+    void addPointUI(Point np);
 
     //! Indique si 2 triangles sont "swapable" (inutilisé)
     bool canSwap(int idt1, int idt2);
@@ -121,35 +143,28 @@ public:
     //! Swap l'arête commune entre 2 triangles
     void swapArete(int t1, int t2);
 
-    std::pair<int, int> getSommetOppose(int trangleId, int sommetPos);
-
 
     // ============ FONCTIONS ============
-    void buildMaillage();
 
-    void calculVoisin(std::map<std::pair<int, int>, int> & faceVoisine, int iSom[]);
-
-    void addPointIn(int idTriangle, int p1);
-    void updateNeighbors(int idtR, int idtO, int newid);
-
-    void addPointOut(int p0);
-
+    //!
     void makeDelauney();
 
+    //!
     void makeIncrementDelauney(int s);
 
+    //! Indique si le maillage est globalement de Delaunay
     bool checkDelaunay();
+
+    //!
+    void buildVoronoiCenters();
+
+    //!
+    void buildCrust();
+
 
     CercleC getCenter(int idt);
 
     CercleC getCenter(Triangle *idt);
-
-    void buildVoronoiCenters();
-
-    void buildCrust();
-
-    void addPointUI(Point np);
-
 
 
 private:
