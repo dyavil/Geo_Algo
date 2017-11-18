@@ -1,11 +1,21 @@
 #ifndef GLDISPLAY_H
 #define GLDISPLAY_H
 
+/*!
+ * \file gldisplay.h
+ * \brief interface openGL
+ * \author Livaï Quintard - Faurobert Emeric
+ */
+
 #include <gasket.h>
 #include <QGLWidget>
 #include <QMouseEvent>
 #include <QApplication>
 
+/*!
+ * \class GLDisplay
+ * \brief Classe d'interaction avec openGL
+*/
 class GLDisplay : public QGLWidget
 {
     Q_OBJECT
@@ -37,18 +47,18 @@ protected:
     virtual void mousePressEvent ( QMouseEvent * event );
 
 private:
-    float _zoom;
-    Gasket gasket;
-    std::string filepath;
+    float _zoom;/*!< Valeur de zoom sur l'affichage */
+    Gasket gasket;/*!< Lien avec le modèle*/
+    std::string filepath;/*!< path du fichier courant*/
 
-    bool triangleC;
-    bool voronoiC;
-    bool cerclesC;
-    bool crust;
-    bool preCrust;
+    bool triangleC;/*!< Booleen d'affichage de la triangulation */
+    bool voronoiC;/*!< Booleen d'affichage des cellules de Voronoï */
+    bool cerclesC;/*!< Booleen d'affichage des cercles circonscrits */
+    bool crust;/*!< Booleen d'affichage du resultat de crust */
+    bool preCrust;/*!< Booleen d'affichage de la triangulation precrsut */
 
     float _angle;
-    QPoint _position;    
+    QPoint _position;/*!< Position du curseur */
 };
 
 #endif // GLDISPLAY_H

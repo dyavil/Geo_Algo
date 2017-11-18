@@ -1,11 +1,20 @@
 #ifndef MYITERATORS_H
 #define MYITERATORS_H
 
+/*!
+ * \file myiterators.h
+ * \brief iterateurs et circulateurs
+ * \author Livaï Quintard - Faurobert Emeric
+ */
+
 #include "maillage2D.h"
 
 class maillage2D;
 
-
+/*!
+ * \class circulateur_de_sommets
+ * \brief Classe de circulation autour d'un sommet
+*/
 class circulateur_de_sommets{
 public:
     circulateur_de_sommets(Triangle * ft, Sommet & p, maillage2D * m):currentT(ft), start(ft), current(&p), pivot(p), mesh(m), last(false){}
@@ -27,7 +36,10 @@ private:
     int indexPivot;
 };
 
-
+/*!
+ * \class circulateur_de_faces
+ * \brief Classe de circulation autour d'un sommet
+*/
 class circulateur_de_faces{
 public:
     circulateur_de_faces(Triangle * ft, Sommet & p, maillage2D * m):start(ft), current(ft), pivot(p), mesh(m){}
@@ -46,7 +58,10 @@ private:
     int indexPivot;
 };
 
-
+/*!
+ * \class marche_visibilite
+ * \brief Classe de marche vers un triangle
+*/
 class marche_visibilite{
 public:
     marche_visibilite(Point & p, maillage2D * m) : point(p), current(0), mesh(m), index(0) {}

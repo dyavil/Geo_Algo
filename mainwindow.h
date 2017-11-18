@@ -1,6 +1,13 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+
+/*!
+ * \file mainwindow.h
+ * \brief interface graphique globale
+ * \author Livaï Quintard - Faurobert Emeric
+ */
+
 #include <QMainWindow>
 #include <QFileDialog>
 namespace Ui {
