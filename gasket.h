@@ -6,14 +6,14 @@
 class Gasket
 {
 public:
-    Gasket() { maillage.initEmpty(); }
-    Gasket(std::string path);
+    Gasket();
 
     void drawTriangles();
     void drawVoronoi();
     void drawCercles();
     void drawPreCrust();
     void drawCrust();
+    void rebuild(std::string path = " ");
 
     void addPoint(float x, float y);
     void exportFile(std::string filename) { maillage.exportToFile(filename); }

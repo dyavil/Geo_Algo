@@ -20,6 +20,10 @@ marche_visibilite maillage2D::marche_begin(Point p) {
     return r;
 }
 
+void maillage2D::clear(){
+    sommets.clear();
+    faces.clear();
+}
 
 
 // Initialisation par défaut du maillage
@@ -583,6 +587,8 @@ void maillage2D::addPointOut(int p0){
     std::vector<Triangle *> tris;
     circulateur_de_faces circu = faces_incidente(*sommet_begin());
 
+    //on récupere les points de l'enveloppe convexe
+    //vus par le point ajouté (donc les faces liées au point infini correspondantes)
     int nbt = 0;
     circu = circu.debut();
 
@@ -604,11 +610,15 @@ void maillage2D::addPointOut(int p0){
         ++circu;
     }while(circu != circu.debut());
 
+    //on remplace le point infini par le point ajouté pour
+    //les triangles(arretes opposées au point infini) vus par le point ajouté
     for(unsigned int i = 0; i < points.size(); i++){
 
         tris[i]->getSommets()[0] = p0;
 
     }
+
+    //mise à jour des voisins
     unsigned int idStart=1;
     std::vector<Triangle *> orderTris;
     std::vector<std::pair<int, int>> orderPoints;
@@ -671,8 +681,10 @@ void maillage2D::addPointOut(int p0){
         orderTris[orderTris.size()-1]->getVoisins()[1] = st;
 
         p1 = orderPoints[0].first;
-        //maj des voisin au deux créérs
+        //maj des voisin au deux créés
         p2 = orderPoints[orderPoints.size()-1].second;
+
+        //ajout des deux nouveaux triangles liés au point infini
         faces.push_back(Triangle(0, p1, p0, inT2, st, nT2));
 
         faces.push_back(Triangle(0, p0, p2, inT1, nT1, st-1));

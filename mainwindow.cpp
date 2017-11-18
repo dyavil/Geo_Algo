@@ -76,8 +76,11 @@ void MainWindow::onZoomOutButton(){
 }
 
 void MainWindow::onLoad() {
+    ui->infoLabel->setText("Chargement en cours ...");
     QString filepath = QFileDialog::getOpenFileName(this, "Charger un fichier...", "../geo-algo/points/");
     ui->widget->loadMesh(filepath);
+    ui->infoLabel->setText("");
+
 }
 
 void MainWindow::onWrite(){
@@ -86,7 +89,7 @@ void MainWindow::onWrite(){
 }
 
 void MainWindow::onRestart(){
-    ui->widget->getGasket() = Gasket();
+    ui->widget->getGasket().rebuild();
     ui->widget->setAngle(0);
     ui->widget->updateGL();
 }
