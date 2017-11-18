@@ -126,32 +126,18 @@ void maillage2D::loadPoints(std::string filename, bool d3) {
 }
 
 //
-void maillage2D::calculVoisin(std::map<std::pair<int, int>, int> & faceVoisine, int iSom[]){
+void maillage2D::calculVoisin(std::map<std::pair<int, int>, int> & faceVoisine, int iSom[]) {
     std::map<std::pair<int, int>, int>::iterator it;
-    int i = faces.size()-1;
+    int nbFaces = faces.size()-1;
     // Faces voisines de la face
-    it = faceVoisine.find(std::make_pair(iSom[0], iSom[1]));
-    if(it != faceVoisine.end()) {
-        faces[i].getVoisins()[2] = it->second;
-        faces[it->second].getVoisins()[somArete(it->second, iSom[1], iSom[0])] = i;
-    } else {
-        faceVoisine.insert(std::pair<std::pair<int, int>, int> (std::make_pair(iSom[1], iSom[0]), i));
-    }
-
-    it = faceVoisine.find(std::make_pair(iSom[1], iSom[2]));
-    if(it != faceVoisine.end()) {
-        faces[i].getVoisins()[0] = it->second;
-        faces[it->second].getVoisins()[somArete(it->second, iSom[2], iSom[1])] = i;
-    } else {
-        faceVoisine.insert(std::pair<std::pair<int, int>, int> (std::make_pair(iSom[2], iSom[1]), i));
-    }
-
-    it = faceVoisine.find(std::make_pair(iSom[2], iSom[0]));
-    if(it != faceVoisine.end()) {
-        faces[i].getVoisins()[1] = it->second;
-        faces[it->second].getVoisins()[somArete(it->second, iSom[0], iSom[2])] = i;
-    } else {
-        faceVoisine.insert(std::pair<std::pair<int, int>, int> (std::make_pair(iSom[0], iSom[2]), i));
+    for(int i = 0; i < 3; ++i) {
+        it = faceVoisine.find(std::make_pair(iSom[i], iSom[(i+1)%3]));
+        if(it != faceVoisine.end()) {
+            faces[nbFaces].getVoisins()[(i+2)%3] = it->second;
+            faces[it->second].getVoisins()[somArete(it->second, iSom[(i+1)%3], iSom[i])] = nbFaces;
+        } else {
+            faceVoisine.insert(std::pair<std::pair<int, int>, int> (std::make_pair(iSom[(i+1)%3], iSom[i]), nbFaces));
+        }
     }
 }
 
@@ -201,8 +187,7 @@ void maillage2D::buildMaillage(){
 
             if(pos == (unsigned int)-1) {
                 addPointOut(i);
-            }
-            else {
+            } else {
                 addPointIn(pos, i);
             }
 
