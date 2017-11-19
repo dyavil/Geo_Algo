@@ -60,8 +60,8 @@ public:
     Triangle() {}
     Triangle(int s1, int s2, int s3, int v1 = -1, int v2 = -1, int v3 = -1) : s{s1, s2, s3}, v{v1, v2, v3} {}
 
-    int (&getVoisins())[3]{return v;};
-    int (&getSommets())[3]{return s;};
+    int (&getVoisins())[3]{ return v; };
+    int (&getSommets())[3]{ return s; };
 
     friend std::ostream & operator << (std::ostream & out, const Triangle & t) { return out << "s : " << t.s[0] << " " << t.s[1] << " " << t.s[2] << " | v : " << t.v[0] << " " << t.v[1] << " " << t.v[2]; }
 
@@ -71,24 +71,24 @@ private:
 };
 
 
-class Delaunay{
+class Delaunay {
 public:
     static bool isOutCircle(Point p1, Point p2, Point p3, Point np);
-    static double deter(int n, double mat[10][10], double & d);
+    static double deter(int n, double mat[4][4], double & d);
 };
 
-class CercleC{
+class CercleC {
 public:
-    CercleC():center(Point()), radius(0){}
+    CercleC() : center(Point()), radius(0) {}
 
     Point center;
     float radius;
 };
 
-class VoronoiCell{
+class VoronoiCell {
 public:
-    VoronoiCell(){}
-    ~VoronoiCell(){}
+    VoronoiCell() {}
+    ~VoronoiCell() {}
     std::vector<int> & getPoints() { return points; }
 
 private:
