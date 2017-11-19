@@ -666,7 +666,7 @@ void maillage2D::makeDelauney(){
     while(restart){
         for (unsigned int i = 0; i < faces.size(); ++i) {
             restart = false;
-            if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
+            if(!isInvisible(i)){
                 int currentSommet1 = getSommetOppose(i, 0);
                 int currentVoisin1 = faces[i].getVoisins()[0];
 
@@ -679,15 +679,15 @@ void maillage2D::makeDelauney(){
                 Delaunay d;
 
                 if(currentSommet1 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet1].getPoint())) {
-                    if (canSwap(currentVoisin1, i)) swapArete(currentVoisin1, i);
+                    swapArete(currentVoisin1, i);
                     restart = true;
                 }
                 if(!restart && currentSommet2 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet2].getPoint())) {
-                    if (canSwap(currentVoisin2, i)) swapArete(currentVoisin2, i);
+                    swapArete(currentVoisin2, i);
                     restart = true;
                 }
                 if(!restart && currentSommet3 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet3].getPoint())) {
-                    if (canSwap(currentVoisin3, i)) swapArete(currentVoisin3, i);
+                    swapArete(currentVoisin3, i);
                     restart = true;
                 }
             }
@@ -720,14 +720,12 @@ void maillage2D::makeIncrementDelauney(int s){
         int pos = somAreteCommune(current.first, current.second).second;
         auto it = done.end();
         if(!isInvisible(current.first) && !isInvisible(current.second) && !d.isOutCircle(sommets[faces[current.first].getSommets()[0]].getPoint(), sommets[faces[current.first].getSommets()[1]].getPoint(), sommets[faces[current.first].getSommets()[2]].getPoint(), sommets[faces[current.second].getSommets()[pos]].getPoint())) {
-            if(canSwap(current.first, current.second)) {
-                int v1 = faces[current.second].getVoisins()[(pos+1)%3];
-                int v2 = faces[current.second].getVoisins()[(pos+2)%3];
-                swapArete(current.first, current.second);
-                done.insert(std::pair<int, int> (std::make_pair(std::min(current.first, current.second), std::max(current.first, current.second))));
-                if(!isInvisible(v1) && done.find(std::make_pair(std::min(current.first, v1), std::max(current.first, v1))) == it) arretes.push_back(std::make_pair(current.first, v1));
-                if(!isInvisible(v2) && done.find(std::make_pair(std::min(current.second, v2), std::max(current.second, v2))) == it) arretes.push_back(std::make_pair(current.second, v2));
-            }
+            int v1 = faces[current.second].getVoisins()[(pos+1)%3];
+            int v2 = faces[current.second].getVoisins()[(pos+2)%3];
+            swapArete(current.first, current.second);
+            done.insert(std::pair<int, int> (std::make_pair(std::min(current.first, current.second), std::max(current.first, current.second))));
+            if(!isInvisible(v1) && done.find(std::make_pair(std::min(current.first, v1), std::max(current.first, v1))) == it) arretes.push_back(std::make_pair(current.first, v1));
+            if(!isInvisible(v2) && done.find(std::make_pair(std::min(current.second, v2), std::max(current.second, v2))) == it) arretes.push_back(std::make_pair(current.second, v2));
         }
     }
 }
@@ -752,7 +750,6 @@ bool maillage2D::checkDelaunay(){
             }
         }
     }
-
     for (unsigned int i = 0; i < faces.size(); ++i) {
         if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
             CercleC cer = getCenter(i);
