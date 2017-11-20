@@ -1,13 +1,22 @@
 #ifndef GEOMETRIE
 #define GEOMETRIE
 
+/*!
+ * \file geometrie.h
+ * \brief geometries utilisées par le maillage
+ * \author Livaï Quintard - Faurobert Emeric
+ */
+
 #include<iostream>
 #include<math.h>
 #include<vector>
 
 #define VAR_TYPE    float
 
-
+/*!
+ * \class Point
+ * \brief Classe représentant un point dans l'espace
+*/
 class Point {
 public:
     Point(VAR_TYPE _x = 0, VAR_TYPE _y = 0, VAR_TYPE _z = 0) : x(_x), y(_y), z(_z) {}
@@ -18,6 +27,10 @@ public:
     VAR_TYPE x, y, z;
 };
 
+/*!
+ * \class Vector3
+ * \brief Classe représentant un vecteur dans l'espace
+*/
 class Vector3 {
 public:
     Vector3(VAR_TYPE _x = 0, VAR_TYPE _y = 0, VAR_TYPE _z = 0) : x(_x), y(_y), z(_z) {}
@@ -38,7 +51,10 @@ inline Vector3 operator *(Vector3 v, Vector3 u){Vector3 res; res.x = v.x*u.x; re
 inline Vector3 operator *(Vector3 u, float other){Vector3 r; r.x=other*u.x; r.y=other*u.y; r.z=other*u.z;  return r;}
 inline Vector3 operator *(float other, Vector3 u){Vector3 r; r.x=other*u.x; r.y=other*u.y; r.z=other*u.z;  return r;}
 
-
+/*!
+ * \class Sommet
+ * \brief Classe représentant un sommet dans le maillage
+*/
 class Sommet {
 public:
     Sommet() {}
@@ -55,6 +71,10 @@ public:
     int face;
 };
 
+/*!
+ * \class Triangle
+ * \brief Classe représentant un triangle (une face) dans le maillage
+*/
 class Triangle {
 public:
     Triangle() {}
@@ -70,14 +90,21 @@ private:
     int v[3];
 };
 
-
-class Delaunay {
+/*!
+ * \class Delaunay
+ * \brief Classe utilitaire pour faire les tests pour Delaunay
+*/
+class Delaunay{
 public:
     static bool isOutCircle(Point p1, Point p2, Point p3, Point np);
     static double deter(int n, double mat[4][4], double & d);
 };
 
-class CercleC {
+/*!
+ * \class CercleC
+ * \brief Classe représentant un cercle circonscrit
+*/
+class CercleC{
 public:
     CercleC() : center(Point()), radius(0) {}
 
@@ -85,7 +112,11 @@ public:
     float radius;
 };
 
-class VoronoiCell {
+/*!
+ * \class VoronoïCell
+ * \brief Classe représentant une cellule de voronoï
+*/
+class VoronoiCell{
 public:
     VoronoiCell() {}
     ~VoronoiCell() {}

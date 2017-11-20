@@ -35,6 +35,7 @@ void GLDisplay::zoomIn(){
 
 void GLDisplay::zoomOut(){
     _zoom = _zoom - 0.2f;
+    if (_zoom <= 0.1) _zoom = 0.2f;
     updateGL();
 }
 
@@ -43,7 +44,7 @@ Gasket & GLDisplay::getGasket(){
 }
 
 void GLDisplay::loadMesh(QString path) {
-    gasket = Gasket(path.toStdString());
+    gasket.rebuild(path.toStdString());
     updateGL();
 }
 
@@ -113,7 +114,7 @@ void GLDisplay::mouseMoveEvent(QMouseEvent *event)
     if( event != NULL ) {
         QPoint position = event->pos();
 
-        _angle += (position.x() - _position.x());
+        //if(event->buttons() == Qt::LeftButton) _angle += (position.x() - _position.x());
 
         _position = position;
 
@@ -125,7 +126,7 @@ void GLDisplay::mousePressEvent(QMouseEvent *event)
 {
     if( event != NULL ){
         _position = event->pos();
-        gasket.addPoint(_position.x()*((2*FRUSTUM_SIZE*(1/_zoom))/this->size().width())-FRUSTUM_SIZE*(1/_zoom), -_position.y()*((2*FRUSTUM_SIZE*(1/_zoom))/this->size().height())+FRUSTUM_SIZE*(1/_zoom));
+        if(event->buttons() == Qt::RightButton) gasket.addPoint(_position.x()*((2*FRUSTUM_SIZE*(1/_zoom))/this->size().width())-FRUSTUM_SIZE*(1/_zoom), -_position.y()*((2*FRUSTUM_SIZE*(1/_zoom))/this->size().height())+FRUSTUM_SIZE*(1/_zoom));
 
         updateGL();
     }

@@ -1,20 +1,70 @@
 #include "maillage2D.h"
 
-// Renvoie un circulateur de sommets autour du sommet v
+// Get du cercle circonscrit d'un triangle
+CercleC maillage2D::getCenter(int idt){
+    Point tp1, tp2, tp3;
+    Point res;
+    CercleC ret;
+    float d;
+
+    tp1 = sommets[faces[idt].getSommets()[0]].getPoint();
+    tp2 = sommets[faces[idt].getSommets()[1]].getPoint();
+    tp3 = sommets[faces[idt].getSommets()[2]].getPoint();
+
+    Vector3 a(tp1);
+    Vector3 b(tp2);
+    Vector3 c(tp3);
+
+    d = 2 *(a.x*(b.y-c.y)+b.x*(c.y-a.y)+c.x*(a.y-b.y));
+    res.x = (1/d)*((a.x*a.x+a.y*a.y)*(b.y-c.y)+(b.x*b.x+b.y*b.y)*(c.y-a.y)+(c.x*c.x+c.y*c.y)*(a.y-b.y));
+    res.y = (1/d)*((a.x*a.x+a.y*a.y)*(c.x-b.x)+(b.x*b.x+b.y*b.y)*(a.x-c.x)+(c.x*c.x+c.y*c.y)*(b.x-a.x));
+    ret.center = res;
+    float rad = sqrt((a.x-res.x)*(a.x-res.x)+(a.y-res.y)*(a.y-res.y));
+    ret.radius = rad;
+    return ret;
+}
+
+// Get du cercle circonscrit d'un triangle
+CercleC maillage2D::getCenter(Triangle *idt){
+    Point tp1, tp2, tp3;
+    Point res;
+    CercleC ret;
+    float d;
+
+    tp1 = sommets[idt->getSommets()[0]].getPoint();
+    tp2 = sommets[idt->getSommets()[1]].getPoint();
+    tp3 = sommets[idt->getSommets()[2]].getPoint();
+
+    Vector3 a(tp1);
+    Vector3 b(tp2);
+    Vector3 c(tp3);
+
+    d = 2 *(a.x*(b.y-c.y)+b.x*(c.y-a.y)+c.x*(a.y-b.y));
+    res.x = (1/d)*((a.x*a.x+a.y*a.y)*(b.y-c.y)+(b.x*b.x+b.y*b.y)*(c.y-a.y)+(c.x*c.x+c.y*c.y)*(a.y-b.y));
+    res.y = (1/d)*((a.x*a.x+a.y*a.y)*(c.x-b.x)+(b.x*b.x+b.y*b.y)*(a.x-c.x)+(c.x*c.x+c.y*c.y)*(b.x-a.x));
+    ret.center = res;
+    float rad = sqrt((a.x-res.x)*(a.x-res.x)+(a.y-res.y)*(a.y-res.y));
+    ret.radius = rad;
+    return ret;
+}
+
+
+
+// Créer un circulateur sur les sommets autour d'un autre
 circulateur_de_sommets maillage2D::sommets_adjacents(Sommet & v){
     circulateur_de_sommets r = circulateur_de_sommets(&faces[v.face], v, this);
     r.getIdSommet();
     return r;
 }
 
-// Renvoie un circulateur de face autour du sommet v
+// Créer un circulateur sur les faces autour d'un sommet
 circulateur_de_faces maillage2D::faces_incidente(Sommet & v){
     circulateur_de_faces r = circulateur_de_faces(&faces[v.face], v, this);
     r.getIdSommet();
     return r;
 }
 
-// Renvoie un itetrateur de face se dirigeant vers le point p
+// Créer un iterateur sur les faces vers un point
 marche_visibilite maillage2D::marche_begin(Point p) {
     marche_visibilite r = marche_visibilite(p, this);
     return r;
@@ -22,7 +72,13 @@ marche_visibilite maillage2D::marche_begin(Point p) {
 
 
 
-// Initialisation par défaut du maillage
+// Vide les buffers de sommets et faces du maillage
+void maillage2D::clear(){
+    sommets.clear();
+    faces.clear();
+}
+
+// Initialise un maillage par défaut
 void maillage2D::initEmpty(){
     Sommet infinite = Sommet(Point(0, 0, -1), -1);
     sommets.push_back(infinite);
@@ -103,7 +159,7 @@ bool maillage2D::loadOff(std::string filename) {
     return true;
 }
 
-// Initialisation a partir d'un fichier .pts
+// Initialisation a partir d'un fichier .pts, .noff, .tri
 void maillage2D::loadPoints(std::string filename, bool d3) {
     std::ifstream file;
     Sommet infinite = Sommet(Point(0, 0, -1), -1);
@@ -125,7 +181,7 @@ void maillage2D::loadPoints(std::string filename, bool d3) {
     buildMaillage();
 }
 
-//
+// Met a jour les voisins d'apres une liste d'aretes communes
 void maillage2D::calculVoisin(std::map<std::pair<int, int>, int> & faceVoisine, int iSom[]) {
     std::map<std::pair<int, int>, int>::iterator it;
     int nbFaces = faces.size()-1;
@@ -141,7 +197,7 @@ void maillage2D::calculVoisin(std::map<std::pair<int, int>, int> & faceVoisine, 
     }
 }
 
-// Construit le maillage à partir des points
+// Construit le maillage après lecture des points
 void maillage2D::buildMaillage(){
     bool first = true;
     std::map<std::pair<int, int>, int> corresp;
@@ -273,7 +329,7 @@ void maillage2D::drawVoronoi(){
     }
 }
 
-//
+// Affiche les lignes du maillage créer pour générer Crust
 void maillage2D::drawEdgesPreCrust() {
     for(unsigned int i = 0; i < facesPreCrust.size(); i++) {
         if(facesPreCrust[i].getSommets()[0] >= startCrust) glColor3f(0.0, 1.0, 0.0);
@@ -329,7 +385,7 @@ std::pair<int, int> maillage2D::areteSommet(int idt, int ids){
     return std::make_pair(-1, -1);
 }
 
-// Donnes les positions de l'arête commune a 2 triangles
+// Donne les positions de l'arête commune a 2 triangles
 std::pair<int, int> maillage2D::somAreteCommune(int t1, int t2) {
     for(int i = 0; i < 3; i++) {
         for(int j = 0; j < 3; j++) {
@@ -341,7 +397,7 @@ std::pair<int, int> maillage2D::somAreteCommune(int t1, int t2) {
     return std::pair<int, int> (-1, -1);
 }
 
-// Donne l'index du sommet opposé de la position p dans le triangle tId
+// Recupere l'index du sommet opposé à un autre
 int maillage2D::getSommetOppose(int tId, int p) {
     int triOppose = faces[tId].getVoisins()[p];
     std::pair<int, int> arete = somAreteCommune(tId, triOppose);
@@ -370,7 +426,7 @@ bool maillage2D::isTrigo(Point & p1, Point & p2, Point & p3){
     return false;
 }
 
-// Indique si le point p est contenu dans le triangle t
+// Indique si un point est contenu dans un triangle
 bool maillage2D::isInside(Point & p, int t) {
     Point p1 = sommets[faces[t].getSommets()[0]].getPoint();
     Point p2 = sommets[faces[t].getSommets()[1]].getPoint();
@@ -381,7 +437,7 @@ bool maillage2D::isInside(Point & p, int t) {
     return false;
 }
 
-// Retourne l'index du triangle contenant le point p1
+// Retourne l'index du triangle contenant le point p
 int maillage2D::inTriangle(Point p){
 
     marche_visibilite it = marche_begin(p);
@@ -397,21 +453,22 @@ int maillage2D::inTriangle(Point p){
 
         index1 = index2;
         index2 = it.get_current();
-        cpt = it.get_index();
+        cpt = it.get_index();// Indique si le maillage est globalement de Delaunay bool maillage2D::checkDelaunay(){     bool res = true;     for (unsigned int i = 0; i < faces.size(); ++i) {         if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){             int currentSommet1 = getSommetOppose(i, 0);             int currentSommet2 = getSommetOppose(i, 1);             int currentSommet3 = getSommetOppose(i, 2);             Delaunay d;             if(currentSommet1 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet1].getPoint())){                 res = false;             }             if(currentSommet2 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet2].getPoint())){                 res = false;             }             if(currentSommet3 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet3].getPoint())){                 res = false;             }         }     }     for (unsigned int i = 0; i < faces.size(); ++i) {         if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){             CercleC cer = getCenter(i);             Point cmp;             for (unsigned int j = 1; j < sommets.size(); ++j) {                 if(j != (unsigned int)faces[i].getSommets()[0] && j != (unsigned int)faces[i].getSommets()[1] && j != (unsigned int)faces[i].getSommets()[2]){                     if(cmp.dist(cer.center, sommets[j].coord) < cer.radius) res = false;                 }             }         }     }     return res; }
     }
 
     return -1;
 }
 
-//
+// Mise à jour des voisins après ajout de point dans un triangle
 void maillage2D::updateNeighbors(int idtR, int idtO, int newid){
     if(faces[idtR].getVoisins()[0] == idtO) faces[idtR].getVoisins()[0] = newid;
     else if(faces[idtR].getVoisins()[1] == idtO) faces[idtR].getVoisins()[1] = newid;
     else if(faces[idtR].getVoisins()[2] == idtO) faces[idtR].getVoisins()[2] = newid;
 }
 
-// Ajoute un point a l'intérieur du maillage
+// Ajout d'un point (sommet) dans un triangle
 void maillage2D::addPointIn(int idTriangle, int p1){
+    //ajout de p1 dans idTriangle et mise a jour des voisins
     int oldp1 = faces[idTriangle].getSommets()[1];
     faces[idTriangle].getSommets()[1] = p1;
 
@@ -433,12 +490,14 @@ void maillage2D::addPointIn(int idTriangle, int p1){
     updateNeighbors(oldt0, idTriangle, faces.size()-1);
 }
 
-// Ajoute un point a l'extérieur du maillage
+// Ajout d'un point (sommet) à l'exterieur du maillage
 void maillage2D::addPointOut(int p0){
     std::vector<std::pair<int, int>> points;
     std::vector<Triangle *> tris;
     circulateur_de_faces circu = faces_incidente(*sommet_begin());
 
+    //on récupere les points de l'enveloppe convexe
+    //vus par le point ajouté (donc les faces liées au point infini correspondantes)
     int nbt = 0;
     circu = circu.debut();
 
@@ -456,9 +515,13 @@ void maillage2D::addPointOut(int p0){
         ++circu;
     }while(circu != circu.debut());
 
+    //on remplace le point infini par le point ajouté pour
+    //les triangles(arretes opposées au point infini) vus par le point ajouté
     for(unsigned int i = 0; i < points.size(); i++){
         tris[i]->getSommets()[0] = p0;
     }
+
+    //mise à jour des voisins
     unsigned int idStart=1;
     std::vector<Triangle *> orderTris;
     std::vector<std::pair<int, int>> orderPoints;
@@ -517,8 +580,10 @@ void maillage2D::addPointOut(int p0){
         orderTris[orderTris.size()-1]->getVoisins()[1] = st;
 
         p1 = orderPoints[0].first;
-        //maj des voisin au deux créérs
+        //maj des voisins aux deux créés
         p2 = orderPoints[orderPoints.size()-1].second;
+
+        //ajout des deux nouveaux triangles liés au point infini
         faces.push_back(Triangle(0, p1, p0, inT2, st, nT2));
 
         faces.push_back(Triangle(0, p0, p2, inT1, nT1, st-1));
@@ -528,7 +593,7 @@ void maillage2D::addPointOut(int p0){
     }
 }
 
-// Ajoute un point au maillage
+// Ajout d'un point depuis l'interface
 void maillage2D::addPointUI(Point np){
     sommets.push_back(Sommet(np, -1));
     int i = sommets.size()-1;
@@ -545,7 +610,7 @@ void maillage2D::addPointUI(Point np){
     buildCrust();
 }
 
-// Swap l'arête commune entre 2 faces
+// Swap l'arête commune entre 2 triangles
 void maillage2D::swapArete(int t1, int t2) {
     Triangle copyT1 = faces[t1];
     Triangle copyT2 = faces[t2];
@@ -577,6 +642,7 @@ void maillage2D::swapArete(int t1, int t2) {
 
 
 
+// Transformation du maillage en Delaunay (non incrémental)
 void maillage2D::makeDelauney(){
     bool restart = true;
     while(restart){
@@ -612,9 +678,13 @@ void maillage2D::makeDelauney(){
     }
 }
 
+// Transformation du maillage en Delaunay (incrémental)
 void maillage2D::makeIncrementDelauney(int s){
+    //liste a traiter
     std::list<std::pair<int, int>> arretes;
+    //liste traitée
     std::set<std::pair<int, int>> done;
+    //triangles initiaux
     std::vector<int> initTriangles;
     circulateur_de_faces circu = faces_incidente(sommets[s]);
     do {
@@ -646,9 +716,10 @@ void maillage2D::makeIncrementDelauney(int s){
     }
 }
 
-// Indique si le maillage est globalement de Delaunay
+// Vérification si le maillage est de Delaunay
 bool maillage2D::checkDelaunay(){
     bool res = true;
+    //verification avec calcul de determinant
     for (unsigned int i = 0; i < faces.size(); ++i) {
         if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
             int currentSommet1 = getSommetOppose(i, 0);
@@ -680,7 +751,7 @@ bool maillage2D::checkDelaunay(){
     return res;
 }
 
-//
+// Fabrication du maillage des cellules de Voronoï
 void maillage2D::buildVoronoiCenters(){
     voronoiPoints.clear();
     voronoiCells.clear();
@@ -707,7 +778,7 @@ void maillage2D::buildVoronoiCenters(){
     }
 }
 
-//
+// Algorithme Crust
 void maillage2D::buildCrust(){
     std::map<std::pair<int, int>, int> r;
     std::vector<Sommet> tmp = sommets;
@@ -719,7 +790,7 @@ void maillage2D::buildCrust(){
             sommets.push_back(Sommet(voronoiPoints[i]));
         }
     }
-
+    //on créer le nouveau maillage
     for (unsigned int i = start; i < sommets.size(); ++i) {
         unsigned int pos = inTriangle(sommets[i].getPoint());
         if(pos == (unsigned int)-1) {
@@ -729,7 +800,7 @@ void maillage2D::buildCrust(){
         }
         makeIncrementDelauney(i);
     }
-
+    //on applique l'algorithme crust
     for (unsigned int i = 0; i < faces.size(); ++i) {
         if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0) {
             int id1 = std::max(faces[i].getSommets()[0], faces[i].getSommets()[1]);
@@ -766,49 +837,10 @@ void maillage2D::buildCrust(){
             }
         }
     }
+    //allocation des buffers
     sommetsPreCrust = sommets;
     startCrust = start;
     facesPreCrust = faces;
     faces = save;
     sommets = tmp;
-}
-
-CercleC maillage2D::getCenter(int idt){
-    Point tp1, tp2, tp3;
-    Point res;
-    CercleC ret;
-    float d;
-    tp1 = sommets[faces[idt].getSommets()[0]].getPoint();
-    tp2 = sommets[faces[idt].getSommets()[1]].getPoint();
-    tp3 = sommets[faces[idt].getSommets()[2]].getPoint();
-    Vector3 a(tp1);
-    Vector3 b(tp2);
-    Vector3 c(tp3);
-    d = 2 *(a.x*(b.y-c.y)+b.x*(c.y-a.y)+c.x*(a.y-b.y));
-    res.x = (1/d)*((a.x*a.x+a.y*a.y)*(b.y-c.y)+(b.x*b.x+b.y*b.y)*(c.y-a.y)+(c.x*c.x+c.y*c.y)*(a.y-b.y));
-    res.y = (1/d)*((a.x*a.x+a.y*a.y)*(c.x-b.x)+(b.x*b.x+b.y*b.y)*(a.x-c.x)+(c.x*c.x+c.y*c.y)*(b.x-a.x));
-    ret.center = res;
-    float rad = sqrt((a.x-res.x)*(a.x-res.x)+(a.y-res.y)*(a.y-res.y));
-    ret.radius = rad;
-    return ret;
-}
-
-CercleC maillage2D::getCenter(Triangle *idt){
-    Point tp1, tp2, tp3;
-    Point res;
-    CercleC ret;
-    float d;
-    tp1 = sommets[idt->getSommets()[0]].getPoint();
-    tp2 = sommets[idt->getSommets()[1]].getPoint();
-    tp3 = sommets[idt->getSommets()[2]].getPoint();
-    Vector3 a(tp1);
-    Vector3 b(tp2);
-    Vector3 c(tp3);
-    d = 2 *(a.x*(b.y-c.y)+b.x*(c.y-a.y)+c.x*(a.y-b.y));
-    res.x = (1/d)*((a.x*a.x+a.y*a.y)*(b.y-c.y)+(b.x*b.x+b.y*b.y)*(c.y-a.y)+(c.x*c.x+c.y*c.y)*(a.y-b.y));
-    res.y = (1/d)*((a.x*a.x+a.y*a.y)*(c.x-b.x)+(b.x*b.x+b.y*b.y)*(a.x-c.x)+(c.x*c.x+c.y*c.y)*(b.x-a.x));
-    ret.center = res;
-    float rad = sqrt((a.x-res.x)*(a.x-res.x)+(a.y-res.y)*(a.y-res.y));
-    ret.radius = rad;
-    return ret;
 }
