@@ -292,7 +292,7 @@ void maillage2D::drawEdgesTriangulation() {
     for(unsigned int i = 0; i < faces.size(); i++) {
         glColor3f(1.0, 1.0, 0.0);
         glBegin(GL_LINE_LOOP);
-        if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
+        if(!isInvisible(i)) {
             glVertex3f(sommets[faces[i].getSommets()[0]].coord.x, sommets[faces[i].getSommets()[0]].coord.y, sommets[faces[i].getSommets()[0]].coord.z);
             glVertex3f(sommets[faces[i].getSommets()[1]].coord.x, sommets[faces[i].getSommets()[1]].coord.y, sommets[faces[i].getSommets()[1]].coord.z);
             glVertex3f(sommets[faces[i].getSommets()[2]].coord.x, sommets[faces[i].getSommets()[2]].coord.y, sommets[faces[i].getSommets()[2]].coord.z);
@@ -306,7 +306,7 @@ void maillage2D::drawCircle()
 {
    float tpi = 3.14159 * 2.0;
    for (unsigned int i = 0; i < faces.size(); ++i) {
-       if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
+       if(!isInvisible(i)) {
            glBegin(GL_LINE_LOOP);
            for (int j=0; j < 60; j++)
            {
@@ -453,7 +453,7 @@ int maillage2D::inTriangle(Point p){
 
         index1 = index2;
         index2 = it.get_current();
-        cpt = it.get_index();// Indique si le maillage est globalement de Delaunay bool maillage2D::checkDelaunay(){     bool res = true;     for (unsigned int i = 0; i < faces.size(); ++i) {         if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){             int currentSommet1 = getSommetOppose(i, 0);             int currentSommet2 = getSommetOppose(i, 1);             int currentSommet3 = getSommetOppose(i, 2);             Delaunay d;             if(currentSommet1 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet1].getPoint())){                 res = false;             }             if(currentSommet2 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet2].getPoint())){                 res = false;             }             if(currentSommet3 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet3].getPoint())){                 res = false;             }         }     }     for (unsigned int i = 0; i < faces.size(); ++i) {         if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){             CercleC cer = getCenter(i);             Point cmp;             for (unsigned int j = 1; j < sommets.size(); ++j) {                 if(j != (unsigned int)faces[i].getSommets()[0] && j != (unsigned int)faces[i].getSommets()[1] && j != (unsigned int)faces[i].getSommets()[2]){                     if(cmp.dist(cer.center, sommets[j].coord) < cer.radius) res = false;                 }             }         }     }     return res; }
+        cpt = it.get_index();
     }
 
     return -1;
@@ -721,28 +721,28 @@ bool maillage2D::checkDelaunay(){
     bool res = true;
     //verification avec calcul de determinant
     for (unsigned int i = 0; i < faces.size(); ++i) {
-        if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
+        if(!isInvisible(i)) {
             int currentSommet1 = getSommetOppose(i, 0);
             int currentSommet2 = getSommetOppose(i, 1);
             int currentSommet3 = getSommetOppose(i, 2);
             Delaunay d;
-            if(currentSommet1 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet1].getPoint())){
+            if(currentSommet1 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet1].getPoint())) {
                 res = false;
             }
-            if(currentSommet2 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet2].getPoint())){
+            if(currentSommet2 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet2].getPoint())) {
                 res = false;
             }
-            if(currentSommet3 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet3].getPoint())){
+            if(currentSommet3 != 0 && !d.isOutCircle(sommets[faces[i].getSommets()[0]].getPoint(), sommets[faces[i].getSommets()[1]].getPoint(), sommets[faces[i].getSommets()[2]].getPoint(), sommets[currentSommet3].getPoint())) {
                 res = false;
             }
         }
     }
     for (unsigned int i = 0; i < faces.size(); ++i) {
-        if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0){
+        if(!isInvisible(i)) {
             CercleC cer = getCenter(i);
             Point cmp;
             for (unsigned int j = 1; j < sommets.size(); ++j) {
-                if(j != (unsigned int)faces[i].getSommets()[0] && j != (unsigned int)faces[i].getSommets()[1] && j != (unsigned int)faces[i].getSommets()[2]){
+                if(j != (unsigned int)faces[i].getSommets()[0] && j != (unsigned int)faces[i].getSommets()[1] && j != (unsigned int)faces[i].getSommets()[2]) {
                     if(cmp.dist(cer.center, sommets[j].coord) < cer.radius) res = false;
                 }
             }
@@ -786,7 +786,7 @@ void maillage2D::buildCrust(){
     sommetsCrust.clear();
     int start = sommets.size();
     for (unsigned int i = 0; i < voronoiPoints.size(); ++i) {
-        if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0) {
+        if(!isInvisible(i)) {
             sommets.push_back(Sommet(voronoiPoints[i]));
         }
     }
@@ -802,7 +802,7 @@ void maillage2D::buildCrust(){
     }
     //on applique l'algorithme crust
     for (unsigned int i = 0; i < faces.size(); ++i) {
-        if(faces[i].getSommets()[0] != 0 && faces[i].getSommets()[1] != 0 && faces[i].getSommets()[2] != 0) {
+        if(!isInvisible(i)) {
             int id1 = std::max(faces[i].getSommets()[0], faces[i].getSommets()[1]);
             int id2 = std::min(faces[i].getSommets()[0], faces[i].getSommets()[1]);
             bool cont = false;
