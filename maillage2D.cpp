@@ -254,7 +254,6 @@ void maillage2D::drawCircle()
            glBegin(GL_LINE_LOOP);
            for (int j=0; j < 60; j++)
            {
-
               CercleC c = getCenter(i);
               glVertex2f(c.center.x + (c.radius * cos(j * tpi / 60)),c.center.y + (c.radius* sin(j * tpi / 60)));
            }
@@ -402,59 +401,6 @@ int maillage2D::inTriangle(Point p){
     }
 
     return -1;
-
-    /*
-    int triangleId = -1;
-    for(unsigned int i = 0; i < faces.size(); ++i){
-        bool cont = true;
-        if(faces[i].getSommets()[0] == 0 || faces[i].getSommets()[1] == 0 || faces[i].getSommets()[2] == 0) cont = false;
-
-        if (cont){
-        Vector3 vec1 = Vector3(p1, sommets[faces[i].getSommets()[0]].getPoint());
-        Vector3 vec2 = Vector3(p1, sommets[faces[i].getSommets()[1]].getPoint());
-        Vector3 dir;
-        dir = dir.cross(vec1, vec2);
-        if(dir.z < 0) cont = false;
-            if(cont){
-                vec1 = Vector3(p1, sommets[faces[i].getSommets()[1]].getPoint());
-                vec2 = Vector3(p1, sommets[faces[i].getSommets()[2]].getPoint());
-                dir = dir.cross(vec1, vec2);
-                if(dir.z < 0) cont = false;
-                if(cont){
-                    vec1 = Vector3(p1, sommets[faces[i].getSommets()[2]].getPoint());
-                    vec2 = Vector3(p1, sommets[faces[i].getSommets()[0]].getPoint());
-                    dir = dir.cross(vec1, vec2);
-                    if(dir.z < 0) cont = false;
-                    else {
-                        triangleId = i;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    return triangleId;
-    */
-}
-
-// Remet le point infini d'un triangle a la position 0 (inutilisé)
-void maillage2D::setInfinyAtZero(int t) {
-    if(isInvisible(t)){
-        while(faces[t].getSommets()[0] != 0) {
-            int i2 = faces[t].getSommets()[2];
-            // Màj des faces
-            int s2 = faces[t].getSommets()[2];
-            faces[t].getSommets()[2] = faces[t].getSommets()[1];
-            faces[t].getSommets()[1] = faces[t].getSommets()[0];
-            faces[t].getSommets()[0] = i2;
-            faces[t].getSommets()[0] = s2;
-            // Màj des voisins
-            int v2 = faces[t].getVoisins()[2];
-            faces[t].getVoisins()[2] = faces[t].getVoisins()[1];
-            faces[t].getVoisins()[1] = faces[t].getVoisins()[0];
-            faces[t].getVoisins()[0] = v2;
-        }
-    }
 }
 
 //
@@ -603,24 +549,6 @@ void maillage2D::addPointUI(Point np){
     buildCrust();
 }
 
-// Indique si 2 triangles sont "swapable" (inutilisé)
-bool maillage2D::canSwap(int t1, int t2){
-    std::pair<int, int> aretesCommunes = somAreteCommune(t1, t2);
-    int ac1 = aretesCommunes.first;
-    int ac2 = aretesCommunes.second;
-    if(ac1 == -1 || ac2 == -1) { return false; }
-
-    Point t1p1 = sommets[faces[t1].getSommets()[ac1]].getPoint();
-    Point t1p2 = sommets[faces[t1].getSommets()[(ac1+1)%3]].getPoint();
-    //Point t1p3 = sommets[faces[t2].getSommets()[(ac2+1)%3]].getPoint();
-    Point t2p1 = sommets[faces[t2].getSommets()[ac2]].getPoint();
-    Point t2p2 = sommets[faces[t2].getSommets()[(ac2+1)%3]].getPoint();
-    //Point t2p3 = sommets[faces[t1].getSommets()[(ac1+1)%3]].getPoint();
-    if(isTrigo(t1p1, t1p2, t2p1) && isTrigo(t2p1, t2p2, t1p1)) { return true; }
-
-    return false;
-}
-
 // Swap l'arête commune entre 2 faces
 void maillage2D::swapArete(int t1, int t2) {
     Triangle copyT1 = faces[t1];
@@ -649,14 +577,6 @@ void maillage2D::swapArete(int t1, int t2) {
     // Mise a jour des faces pointées par les sommets
     sommets[faces[t1].getSommets()[(ac1+1)%3]].face = t1;
     sommets[faces[t2].getSommets()[(ac2+1)%3]].face = t2;
-
-    // On répare les triangles "invisibles"
-    /*
-    setInfinyAtZero(t1);
-    setInfinyAtZero(t2);
-    setInfinyAtZero(copyT2.getVoisins()[(ac2+1)%3]);
-    setInfinyAtZero(copyT1.getVoisins()[(ac1+1)%3]);
-    */
 }
 
 

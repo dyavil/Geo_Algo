@@ -122,9 +122,6 @@ public:
     //! Retourne l'index du triangle contenant le point p1
     int inTriangle(Point p1);
 
-    //! Remet le point infini d'un triangle a la position 0 (inutilisé)
-    void setInfinyAtZero(int t);
-
     //!
     void updateNeighbors(int idtR, int idtO, int newid);
 
@@ -136,9 +133,6 @@ public:
 
     //! Ajoute un point au maillage
     void addPointUI(Point np);
-
-    //! Indique si 2 triangles sont "swapable" (inutilisé)
-    bool canSwap(int idt1, int idt2);
 
     //! Swap l'arête commune entre 2 triangles
     void swapArete(int t1, int t2);
