@@ -447,11 +447,7 @@ void maillage2D::addPointOut(int p0){
         p1 = (*circu)->getSommets()[1];
         p2 = (*circu)->getSommets()[2];
 
-        Vector3 vec1 = Vector3(sommets[p0].getPoint(), sommets[p1].getPoint());
-        Vector3 vec2 = Vector3(sommets[p0].getPoint(), sommets[p2].getPoint());
-        Vector3 dir;
-        dir = dir.cross(vec1, vec2);
-        if(dir.z > 0){
+        if(isTrigo(sommets[p0].coord, sommets[p1].coord, sommets[p2].coord)){
             nbt++;
             points.push_back(std::make_pair(p1, p2));
             tris.push_back(*circu);
